@@ -27,6 +27,7 @@ from resumelens.models import (
     PipelineResult,
     ProfileResult,
 )
+from resumelens.pipeline import run
 from resumelens.render import to_html, to_markdown
 
 __version__ = "0.1.0"
@@ -45,6 +46,7 @@ __all__ = [
     "ResumeLensError",
     "VocabularyError",
     "__version__",
+    "run",
     "to_dsl",
     "to_html",
     "to_markdown",

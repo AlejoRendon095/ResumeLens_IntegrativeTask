@@ -60,3 +60,22 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
 - **Adaptaciones y cambios realizados:**
   - Código sin comentarios sobre planes ni tareas.
   - Manejo de tipos para asegurar que solo instancias válidas de modelos textX sean procesadas por el renderizador.
+
+---
+
+## Sesión 4 — 2026-10-09 (Edwar Estacio)
+
+- **Fecha:** 2026-10-09
+- **Herramienta:** Gemini 3.8 Flash (High) (asistente de código Antigravity)
+- **Objetivo:** Orquestación integral del pipeline en `src/resumelens/pipeline.py` (`run`), resolución dinámica de etapas y soporte de inyección de dependencias para desacoplamiento y pruebas unitarias/de integración, con suite en `tests/test_pipeline.py`.
+- **Prompt base:** Implementación de la orquestación del pipeline conectando extracción, normalización, clasificación, DSL y renderizado, verificando invariantes del contrato.
+- **Aportes y contexto del estudiante:**
+  - Diseño de resolución dinámica para conectar automáticamente los módulos de Alejo y Diego (`extraction.py`, `normalization.py`, `recognition.py`, `profiles.py`) cuando estén listos sin modificar sus archivos.
+  - Implementación de fallbacks basados en `vocabulary.json` y perfiles por defecto del contrato para permitir ejecución end-to-end inmediata.
+  - Verificación estricta de invariantes 1, 2, 5, 6 y 7 del contrato.
+- **Resultados generados y utilizados:**
+  - Módulo `src/resumelens/pipeline.py` con función principal `run()`.
+  - Exportación en `src/resumelens/__init__.py`.
+  - Suite de 6 pruebas unitarias y de integración en `tests/test_pipeline.py` (59 pruebas totales pasando).
+- **Adaptaciones y cambios realizados:**
+  - Estructuración limpia del orquestador, tipado estricto y manejo de errores con `ExtractionError`.
