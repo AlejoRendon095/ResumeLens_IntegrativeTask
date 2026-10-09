@@ -1,0 +1,28 @@
+digraph automaton {
+    rankdir=LR;
+    node [shape=circle, fontname="Helvetica"];
+    edge [fontname="Helvetica", fontsize=10];
+    labelloc="t"; label="FULL_STACK_DEVELOPER - Minimal DFA";
+    start [shape=point, width=0.15, label=""];
+    "D0" [shape=circle];
+    "D1" [shape=circle];
+    "D2" [shape=circle];
+    "D3" [shape=circle];
+    "D4" [shape=circle];
+    "D5" [shape=circle];
+    "D6" [shape=doublecircle];
+    start -> "D0";
+    "D0" -> "D1" [label="JAVASCRIPT\nTYPESCRIPT"];
+    "D1" -> "D1" [label="JAVASCRIPT\nTYPESCRIPT"];
+    "D1" -> "D2" [label="REACT\nANGULAR\nVUE"];
+    "D2" -> "D2" [label="REACT\nANGULAR\nVUE"];
+    "D2" -> "D3" [label="NODE_JS\nDJANGO\nSPRING_BOOT"];
+    "D3" -> "D3" [label="NODE_JS\nDJANGO\nSPRING_BOOT"];
+    "D3" -> "D4" [label="SQL\nPOSTGRESQL\nMYSQL\nMONGODB"];
+    "D4" -> "D4" [label="SQL\nPOSTGRESQL\nMYSQL\nMONGODB"];
+    "D4" -> "D5" [label="REST_API"];
+    "D4" -> "D6" [label="GIT"];
+    "D5" -> "D5" [label="REST_API"];
+    "D5" -> "D6" [label="GIT"];
+    "D6" -> "D6" [label="GIT"];
+}

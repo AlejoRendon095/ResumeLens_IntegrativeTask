@@ -1,0 +1,24 @@
+%% DEVOPS_ENGINEER - Minimal DFA
+flowchart LR
+    start(( )) --> D0
+    D0((D0))
+    D1((D1))
+    D2((D2))
+    D3((D3))
+    D4((D4))
+    D5((D5))
+    D6(((D6)))
+    D0 -- "LINUX" --> D1
+    D1 -- "LINUX" --> D1
+    D1 -- "GIT" --> D2
+    D2 -- "GIT" --> D2
+    D2 -- "CI_CD" --> D3
+    D3 -- "CI_CD" --> D3
+    D3 -- "DOCKER" --> D4
+    D4 -- "DOCKER" --> D4
+    D4 -- "KUBERNETES" --> D5
+    D4 -- "AWS" --> D6
+    D5 -- "KUBERNETES" --> D5
+    D5 -- "AWS" --> D6
+    D6 -- "AWS" --> D6
+    style start fill:none,stroke:none

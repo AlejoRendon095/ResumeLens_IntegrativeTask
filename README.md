@@ -51,6 +51,16 @@ pytest
 
 `pyproject.toml` adds `src/` to the import path, so no installation is needed.
 
+## Regenerating the automata diagrams
+
+```bash
+python scripts/export_diagrams.py --svg
+```
+
+Writes the Mermaid (`.mmd`), Graphviz (`.dot`) and SVG diagrams of the four profile
+automata, plus the index [`docs/diagrams/automata.md`](docs/diagrams/automata.md).
+The `--svg` option needs Graphviz installed.
+
 ## Repository layout
 
 ```
