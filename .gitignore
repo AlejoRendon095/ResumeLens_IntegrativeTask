@@ -1,7 +1,7 @@
 # Python
-pycache/
+__pycache__/
 *.py[cod]
-.pyo
+*.pyo
 
 # Virtual environments
 venv/
@@ -11,8 +11,9 @@ env/
 # Testing
 .pytest_cache/
 .coverage
+htmlcov/
 
-# Generated output
+# Generated output (HTML/Markdown visualizations produced by the app)
 output/
 
 # IDE
@@ -27,5 +28,3 @@ Thumbs.db
 build/
 dist/
 *.egg-info/
-
-# TODO: implement

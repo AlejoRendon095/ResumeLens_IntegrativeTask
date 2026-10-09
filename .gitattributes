@@ -1,0 +1,10 @@
+# Normalize line endings: the repository always stores LF, and the working
+# tree also uses LF on every OS. This prevents Windows/OneDrive checkouts
+# from showing every file as "modified" because of CRLF conversions.
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary

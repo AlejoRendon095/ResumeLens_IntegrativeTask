@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Document | `docs/contracts.md` |
-| Version | 1.0 |
-| Date | YYYY-MM-DD (fill in on commit) |
+| Version | 1.1 |
+| Date | 2026-10-09 |
 | Authors | Alejo, Diego, Edwar |
 | Status | Agreed by all members (Sync 1) |
 
@@ -70,11 +70,12 @@ Each member can implement their stage independently as long as they respect this
 | 2. Normalization | Finite-state transducers (7-tuple) | `pyformlang` | `normalization.py` | Alejo |
 | 2b. Sorting | Profile-defined canonical order | plain Python | `sorting.py` | Diego |
 | 3. Recognition | Finite automata (5-tuple) | `pyformlang` | `recognition.py` | Diego |
-| 4. Candidate language | Context-free grammar (EBNF) | `textX` | `dsl.py`, `candidate.tx` | Edwar |
+| Profile loading | JSON configuration (Section 7) | `json` | `profiles.py` | Diego |
+| 4. Candidate language | Context-free grammar (EBNF) | `textX` | `dsl.py`, `src/resumelens/candidate.tx` | Edwar |
 | 4b. Visualization | — | plain Python | `render.py` | Edwar |
 | Orchestration and UI | — | — | `pipeline.py`, `app.py` | Edwar |
 
-Shared code (data models, errors, vocabulary loader) lives in `models.py`, `errors.py`, and `vocabulary.py`. Any change to those files requires approval from all three members.
+Shared code (data models, errors, vocabulary loader) lives in `models.py`, `errors.py`, `vocabulary.py`, and `vocabulary.json` (all under `src/resumelens/`). Any change to those files requires approval from all three members.
 
 ## 2. Global conventions
 
@@ -88,6 +89,8 @@ Shared code (data models, errors, vocabulary loader) lives in `models.py`, `erro
 | Purity | Stage functions are pure: no global state, no I/O except the explicit loaders (`vocabulary.py`, profile loader). |
 | Language of artifacts | Code, docs, poster, and presentation are written in English. |
 | Immutability | A stage must not mutate the object it receives; it returns a new one. |
+| Layout | Package in `src/resumelens/`; tests in `tests/` (run `pytest` from the repository root, configured in `pyproject.toml`); dependencies in `requirements.txt`. |
+| Line endings | LF everywhere, enforced by `.gitattributes`. Do not commit files whose only change is CRLF ↔ LF. |
 
 ## 3. Canonical vocabulary
 
@@ -418,7 +421,7 @@ The same function handles **all four profiles**; there is no per-profile code pa
 
 ## 7. Professional profile configuration
 
-Profiles are **data, not code**. Each profile is a JSON file in `profiles/`, loaded by a single `load_profiles()` function (owner: Diego).
+Profiles are **data, not code**. Each profile is a JSON file in `profiles/`, loaded by a single `load_profiles()` function in `src/resumelens/profiles.py` (owner: Diego).
 
 ### 7.1 Format
 
@@ -628,7 +631,8 @@ Each invariant should have at least one automated test (`tests/`).
 
 | Version | Date | Author | Change |
 |---|---|---|---|
-| 1.0 | YYYY-MM-DD | Alejo, Diego, Edwar | Initial contract: pipeline, data models, vocabulary, profile format, decisions D1–D10. |
+| 1.0 | 2026-10-05 | Alejo, Diego, Edwar | Initial contract: pipeline, data models, vocabulary, profile format, decisions D1–D10. |
+| 1.1 | 2026-10-09 | Diego | Repository fixes: package `__init__.py`, `requirements.txt`, `pyproject.toml`, `.gitattributes` (LF), `candidate.tx` extension, profile files renamed to `devops_engineer.json` / `data_engineer.json`. Shared code created as specified in Sections 3, 5 and 9 (`models.py`, `errors.py`, `vocabulary.py`, `vocabulary.json`). `load_profiles()` placed in `profiles.py`. No interface was changed. |
 
 ## 14. Open items
 

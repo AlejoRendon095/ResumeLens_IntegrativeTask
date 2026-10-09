@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resumelens"
+version = "0.1.0"
+description = "Formal language-based resume screening (regex, FST, FSA, CFG)."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pyformlang>=1.0,<2.0",
+    "textX>=4.0,<5.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+resumelens = ["vocabulary.json", "*.tx"]
+
+[tool.pytest.ini_options]
+# Lets `pytest` import the package from src/ without installing it.
+pythonpath = ["src"]
+testpaths = ["tests"]

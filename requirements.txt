@@ -1,0 +1,11 @@
+# ResumeLens dependencies (Python 3.10+)
+#   pip install -r requirements.txt
+
+# Stage 2 (finite-state transducers) and Stage 3 (finite automata)
+pyformlang>=1.0,<2.0
+
+# Stage 4 (context-free grammar / DSL)
+textX>=4.0,<5.0
+
+# Tests
+pytest>=7.0

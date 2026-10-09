@@ -1,0 +1,14 @@
+/*
+  ResumeLens - Candidate Profile Language (textX grammar)
+  Responsible: Edwar
+
+  TODO: define the context-free grammar of the candidate DSL
+  (docs/contracts.md, Section 6.5; EBNF in docs/formalization.md).
+  It must represent: personal information, contact information,
+  education records (repeated), professional experiences (repeated),
+  skills (canonical tokens, repeated) and the classification result
+  (ACCEPTED | REJECTED) for each of the four profiles.
+
+  This file was renamed from candidate.py: textX grammars use the .tx
+  extension and are loaded with textx.metamodel_from_file().
+*/

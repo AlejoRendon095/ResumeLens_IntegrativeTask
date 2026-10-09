@@ -1,0 +1,126 @@
+{
+  "version": "1.0",
+  "description": "Canonical vocabulary of ResumeLens (docs/contracts.md, Section 3.1). Token -> category -> aliases. Aliases are written already preprocessed (lowercase, single spaces).",
+  "tokens": {
+    "JAVASCRIPT": {
+      "category": "LANGUAGE",
+      "aliases": ["js", "javascript", "java script", "ecmascript"]
+    },
+    "TYPESCRIPT": {
+      "category": "LANGUAGE",
+      "aliases": ["ts", "typescript", "type script"]
+    },
+    "PYTHON": {
+      "category": "LANGUAGE",
+      "aliases": ["python", "python3", "py"]
+    },
+    "JAVA": {
+      "category": "LANGUAGE",
+      "aliases": ["java"]
+    },
+    "SQL": {
+      "category": "LANGUAGE",
+      "aliases": ["sql"]
+    },
+    "REACT": {
+      "category": "FRONTEND",
+      "aliases": ["react", "react.js", "reactjs", "react js"]
+    },
+    "ANGULAR": {
+      "category": "FRONTEND",
+      "aliases": ["angular", "angular.js", "angularjs"]
+    },
+    "VUE": {
+      "category": "FRONTEND",
+      "aliases": ["vue", "vue.js", "vuejs", "vue js"]
+    },
+    "NODE_JS": {
+      "category": "BACKEND",
+      "aliases": ["node", "node.js", "nodejs", "node js"]
+    },
+    "DJANGO": {
+      "category": "BACKEND",
+      "aliases": ["django"]
+    },
+    "SPRING_BOOT": {
+      "category": "BACKEND",
+      "aliases": ["spring boot", "springboot", "spring-boot"]
+    },
+    "REST_API": {
+      "category": "API",
+      "aliases": ["rest", "rest api", "rest apis", "restful", "restful api"]
+    },
+    "POSTGRESQL": {
+      "category": "DATABASE",
+      "aliases": ["postgres", "postgresql", "postgre sql"]
+    },
+    "MYSQL": {
+      "category": "DATABASE",
+      "aliases": ["mysql", "my sql"]
+    },
+    "MONGODB": {
+      "category": "DATABASE",
+      "aliases": ["mongo", "mongodb", "mongo db"]
+    },
+    "GIT": {
+      "category": "VERSION_CONTROL",
+      "aliases": ["git"]
+    },
+    "PANDAS": {
+      "category": "DATA_LIB",
+      "aliases": ["pandas"]
+    },
+    "NUMPY": {
+      "category": "DATA_LIB",
+      "aliases": ["numpy", "num py"]
+    },
+    "SCIKIT_LEARN": {
+      "category": "ML_LIB",
+      "aliases": ["sklearn", "scikit learn", "scikit-learn", "scikitlearn"]
+    },
+    "TENSORFLOW": {
+      "category": "ML_LIB",
+      "aliases": ["tensorflow", "tensor flow", "tf"]
+    },
+    "PYTORCH": {
+      "category": "ML_LIB",
+      "aliases": ["pytorch", "py torch", "torch"]
+    },
+    "ML_MODEL_DEVELOPMENT": {
+      "category": "ML_PRACTICE",
+      "aliases": ["machine learning", "ml", "ml models", "predictive models"]
+    },
+    "LINUX": {
+      "category": "OPERATING_SYSTEM",
+      "aliases": ["linux", "ubuntu", "gnu/linux"]
+    },
+    "CI_CD": {
+      "category": "CI_CD",
+      "aliases": ["ci/cd", "ci cd", "cicd"]
+    },
+    "DOCKER": {
+      "category": "CONTAINER",
+      "aliases": ["docker"]
+    },
+    "KUBERNETES": {
+      "category": "ORCHESTRATION",
+      "aliases": ["kubernetes", "k8s"]
+    },
+    "AWS": {
+      "category": "CLOUD",
+      "aliases": ["aws", "amazon web services"]
+    },
+    "SPARK": {
+      "category": "PROCESSING",
+      "aliases": ["spark", "apache spark", "pyspark"]
+    },
+    "AIRFLOW": {
+      "category": "WORKFLOW",
+      "aliases": ["airflow", "apache airflow"]
+    },
+    "KAFKA": {
+      "category": "STREAMING",
+      "aliases": ["kafka", "apache kafka"]
+    }
+  }
+}
