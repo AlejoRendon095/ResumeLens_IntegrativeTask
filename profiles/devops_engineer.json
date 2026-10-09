@@ -1,3 +1,13 @@
 {
-    
+  "id": "DEVOPS_ENGINEER",
+  "display_name": "DevOps Engineer",
+  "order": 3,
+  "slots": [
+    {"category": "OPERATING_SYSTEM", "any_of": ["LINUX"], "optional": false},
+    {"category": "VERSION_CONTROL", "any_of": ["GIT"], "optional": false},
+    {"category": "CI_CD", "any_of": ["CI_CD"], "optional": false},
+    {"category": "CONTAINER", "any_of": ["DOCKER"], "optional": false},
+    {"category": "ORCHESTRATION", "any_of": ["KUBERNETES"], "optional": true},
+    {"category": "CLOUD", "any_of": ["AWS"], "optional": false}
+  ]
 }

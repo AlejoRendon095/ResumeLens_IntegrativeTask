@@ -1,3 +1,13 @@
 {
-    
+  "id": "FULL_STACK_DEVELOPER",
+  "display_name": "Full Stack Developer",
+  "order": 1,
+  "slots": [
+    {"category": "LANGUAGE", "any_of": ["JAVASCRIPT", "TYPESCRIPT"], "optional": false},
+    {"category": "FRONTEND", "any_of": ["REACT", "ANGULAR", "VUE"], "optional": false},
+    {"category": "BACKEND", "any_of": ["NODE_JS", "DJANGO", "SPRING_BOOT"], "optional": false},
+    {"category": "DATABASE", "any_of": ["SQL", "POSTGRESQL", "MYSQL", "MONGODB"], "optional": false},
+    {"category": "API", "any_of": ["REST_API"], "optional": true},
+    {"category": "VERSION_CONTROL", "any_of": ["GIT"], "optional": false}
+  ]
 }

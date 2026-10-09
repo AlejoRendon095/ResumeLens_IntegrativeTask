@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | `docs/contracts.md` |
-| Version | 1.1 |
+| Version | 1.2 |
 | Date | 2026-10-09 |
 | Authors | Alejo, Diego, Edwar |
 | Status | Agreed by all members (Sync 1) |
@@ -446,6 +446,7 @@ Profiles are **data, not code**. Each profile is a JSON file in `profiles/`, loa
 | `category` | Informational label (matches a category of Section 3.1). |
 | `any_of` | Tokens that satisfy the slot. Every element must exist in the vocabulary. |
 | `optional` | `true` means the slot may be skipped by the automaton. |
+| `order` | *(optional)* Integer position of the profile in `PipelineResult.classifications`. Profiles without it go last, then by file name. |
 
 ### 7.2 Slot semantics (what the automaton recognizes)
 
@@ -633,6 +634,7 @@ Each invariant should have at least one automated test (`tests/`).
 |---|---|---|---|
 | 1.0 | 2026-10-05 | Alejo, Diego, Edwar | Initial contract: pipeline, data models, vocabulary, profile format, decisions D1–D10. |
 | 1.1 | 2026-10-09 | Diego | Repository fixes: package `__init__.py`, `requirements.txt`, `pyproject.toml`, `.gitattributes` (LF), `candidate.tx` extension, profile files renamed to `devops_engineer.json` / `data_engineer.json`. Shared code created as specified in Sections 3, 5 and 9 (`models.py`, `errors.py`, `vocabulary.py`, `vocabulary.json`). `load_profiles()` placed in `profiles.py`. No interface was changed. |
+| 1.2 | 2026-10-09 | Diego | Optional `order` key in the profile format (Section 7.1) so the four results always come out as Full Stack, ML, DevOps, Data. The four profile files filled in as listed in Section 7.4. |
 
 ## 14. Open items
 

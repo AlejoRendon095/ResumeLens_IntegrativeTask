@@ -1,3 +1,13 @@
 {
-    
+  "id": "MACHINE_LEARNING_ENGINEER",
+  "display_name": "Machine Learning Engineer",
+  "order": 2,
+  "slots": [
+    {"category": "LANGUAGE", "any_of": ["PYTHON"], "optional": false},
+    {"category": "DATA_LIB", "any_of": ["PANDAS", "NUMPY"], "optional": false},
+    {"category": "ML_LIB", "any_of": ["SCIKIT_LEARN", "TENSORFLOW", "PYTORCH"], "optional": false},
+    {"category": "ML_PRACTICE", "any_of": ["ML_MODEL_DEVELOPMENT"], "optional": true},
+    {"category": "DATABASE", "any_of": ["SQL", "POSTGRESQL", "MYSQL"], "optional": false},
+    {"category": "VERSION_CONTROL", "any_of": ["GIT"], "optional": false}
+  ]
 }
