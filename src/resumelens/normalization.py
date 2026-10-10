@@ -1,8 +1,14 @@
 """Stage 2 normalization helpers based on finite-state transducers."""
 
 from __future__ import annotations
+
+from functools import lru_cache
 import re
+
 from pyformlang.fst import FST
+
+from resumelens.models import NormalizationResult
+from resumelens.vocabulary import default_vocabulary
 
 INPUT_ALPHABET = frozenset("abcdefghijklmnopqrstuvwxyz0123456789 .-/")
 
@@ -43,3 +49,47 @@ def _apply_transducer(transducer: FST, preprocessed: str) -> str | None:
     if len(outputs) != 1:
         return None
     return "".join(str(symbol) for symbol in outputs[0])
+
+
+@lru_cache(maxsize=1)
+def _transducers() -> tuple[tuple[str, FST], ...]:
+    """Build and retain one transducer for each vocabulary token."""
+    return tuple(
+        (entry.token, build_transducer(entry.token, list(entry.aliases)))
+        for entry in default_vocabulary().values()
+    )
+
+
+def normalize(raw_skills: list[str] | tuple[str, ...]) -> NormalizationResult:
+    """Map extracted skill spellings to canonical vocabulary tokens."""
+    if not isinstance(raw_skills, (list, tuple)) or not all(
+        isinstance(raw, str) for raw in raw_skills
+    ):
+        raise TypeError("raw_skills must be a list or tuple of strings")
+
+    tokens: list[str] = []
+    mapping: dict[str, str] = {}
+    unrecognized: list[str] = []
+
+    for raw in raw_skills:
+        preprocessed = preprocess(raw)
+        matches = [
+            token
+            for token, transducer in _transducers()
+            if _apply_transducer(transducer, preprocessed) == token
+        ]
+        if len(matches) != 1:
+            if raw not in unrecognized:
+                unrecognized.append(raw)
+            continue
+
+        canonical = matches[0]
+        mapping[raw] = canonical
+        if canonical not in tokens:
+            tokens.append(canonical)
+
+    return NormalizationResult(
+        tokens=tokens,
+        mapping=mapping,
+        unrecognized=unrecognized,
+    )
