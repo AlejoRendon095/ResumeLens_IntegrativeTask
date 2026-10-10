@@ -1,0 +1,5 @@
+Mary Jane Watson
+mj.watson@dailybugle.com | https://linkedin.com/in/mjwatson
+5 years of experience developing predictive models.
+Technical Skills:
+Python, Pandas, NumPy, Scikit-learn, TensorFlow, SQL, Git.

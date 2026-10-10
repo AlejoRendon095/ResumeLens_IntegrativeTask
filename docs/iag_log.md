@@ -101,3 +101,22 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - Suite de 5 pruebas unitarias en `tests/test_app.py` (64 pruebas totales pasando).
 - **Adaptaciones y cambios realizados:**
   - Código sin comentarios meta de tareas y tipado estricto.
+
+---
+
+## Sesión 6 — 2026-10-10 (Edwar Estacio)
+
+- **Fecha:** 2026-10-10
+- **Herramienta:** Gemini 3.8 Flash (High) (asistente de código Antigravity)
+- **Objetivo:** Creación de conjunto de datos de prueba realistas en `samples/`, documentación de escenarios de prueba e invariantes formales en `docs/test_cases.md` y suite de pruebas de integración end-to-end en `tests/test_integration.py`.
+- **Prompt base:** Creación de casos de prueba realistas en samples/, formalización de escenarios de prueba e invariantes en docs/test_cases.md y pruebas de integración end-to-end.
+- **Aportes y contexto del estudiante:**
+  - Diseño de 5 currículums representativos en `samples/` cubriendo los 4 perfiles profesionales (Full Stack, ML Engineer, DevOps, Data Engineer) y un caso negativo (candidato con habilidades no técnicas/desconocidas).
+  - Verificación formal de invariantes (partición de habilidades, invarianza ante permutación del orden de habilidades en el CV).
+  - Documentación técnica estructurada en `docs/test_cases.md` con entradas y veredictos esperados.
+- **Resultados generados y utilizados:**
+  - 5 archivos de prueba en `samples/`: `wednesday_addams.txt`, `mary_jane_watson.txt`, `linus_torvalds.txt`, `grace_hopper.txt`, `rejected_candidate.txt`.
+  - Documento `docs/test_cases.md` formalizando los 5 escenarios y los 7 invariantes.
+  - Suite de integración en `tests/test_integration.py` (7 pruebas nuevas, 87 pruebas totales pasando en el repositorio).
+- **Adaptaciones y cambios realizados:**
+  - Validación de integración exitosa con el módulo `extraction.py` implementado por Alejo tras el merge de la rama remota.
