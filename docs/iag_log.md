@@ -120,3 +120,22 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - Suite de integración en `tests/test_integration.py` (7 pruebas nuevas, 87 pruebas totales pasando en el repositorio).
 - **Adaptaciones y cambios realizados:**
   - Validación de integración exitosa con el módulo `extraction.py` implementado por Alejo tras el merge de la rama remota.
+
+---
+
+## Sesión 7 — 2026-10-10 (Edwar Estacio)
+
+- **Fecha:** 2026-10-10
+- **Herramienta:** Gemini 3.8 Flash (High) (asistente de código Antigravity)
+- **Objetivo:** Actualización completa del `README.md` (manual de usuario de la CLI, opciones de exportación, tabla de modelos formales, 101 pruebas automatizadas e índice de documentación) y creación de diagramas de arquitectura y secuencia en `docs/diagrams/diagram.md`.
+- **Prompt base:** Actualización integral del README principal con guía de CLI, ejemplos con los CVs de muestra y formalización de diagramas del sistema.
+- **Aportes y contexto del estudiante:**
+  - Estructuración de ejemplos claros de ejecución para cada uno de los cuatro perfiles profesionales.
+  - Documentación de opciones de salida (resumen en consola y exportación de archivos `.dsl`, `.html`, `.md`).
+  - Definición de diagramas Mermaid para visualización del pipeline y la interacción secuencial de módulos.
+- **Resultados generados y utilizados:**
+  - `README.md` actualizado con instrucciones de instalación, guía de CLI y tabla de modelos formales.
+  - `docs/diagrams/diagram.md` con diagramas de flujo y secuencia en sintaxis Mermaid.
+  - 101 pruebas ejecutadas y pasando al 100%.
+- **Adaptaciones y cambios realizados:**
+  - Redacción en inglés siguiendo las convenciones del repositorio.
