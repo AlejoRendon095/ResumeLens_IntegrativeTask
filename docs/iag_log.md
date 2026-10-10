@@ -120,3 +120,49 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - Suite de integración en `tests/test_integration.py` (7 pruebas nuevas, 87 pruebas totales pasando en el repositorio).
 - **Adaptaciones y cambios realizados:**
   - Validación de integración exitosa con el módulo `extraction.py` implementado por Alejo tras el merge de la rama remota.
+
+---
+
+## Sesión 7 — 2026-10-10 (Edwar Estacio)
+
+- **Fecha:** 2026-10-10
+- **Herramienta:** Gemini 3.8 Flash (High) (asistente de código Antigravity)
+- **Objetivo:** Actualización completa del `README.md` (manual de usuario de la CLI, opciones de exportación, tabla de modelos formales, 101 pruebas automatizadas e índice de documentación) y creación de diagramas de arquitectura y secuencia en `docs/diagrams/diagram.md`.
+- **Prompt base:** Actualización integral del README principal con guía de CLI, ejemplos con los CVs de muestra y formalización de diagramas del sistema.
+- **Aportes y contexto del estudiante:**
+  - Estructuración de ejemplos claros de ejecución para cada uno de los cuatro perfiles profesionales.
+  - Documentación de opciones de salida (resumen en consola y exportación de archivos `.dsl`, `.html`, `.md`).
+  - Definición de diagramas Mermaid para visualización del pipeline y la interacción secuencial de módulos.
+- **Resultados generados y utilizados:**
+  - `README.md` actualizado con instrucciones de instalación, guía de CLI y tabla de modelos formales.
+  - `docs/diagrams/diagram.md` con diagramas de flujo y secuencia en sintaxis Mermaid.
+  - 101 pruebas ejecutadas y pasando al 100%.
+- **Adaptaciones y cambios realizados:**
+  - Redacción en inglés siguiendo las convenciones del repositorio.
+
+---
+
+## Sesión 8 — 2026-10-09 / 2026-10-10 (Juan Diego Balanta Molina — Diego)
+
+- **Fechas:** 2026-10-09 y 2026-10-10 (trabajo distribuido en commits separados por al menos 2 horas).
+- **Herramienta:** Claude (Anthropic), en una sesión de trabajo con acceso al repositorio.
+- **Objetivo:** Revisión del repositorio y corrección del andamiaje; módulos compartidos del contrato; parte de Diego: perfiles (`profiles/*.json`, `profiles.py`), ordenamiento (`sorting.py`), autómatas de reconocimiento (`recognition.py`), diagramas (`diagrams.py`), formalización de la Etapa 3, revisión de literatura, documentación de perfiles, casos de prueba y diseño de módulos.
+- **Contenido propio entregado a la IA:**
+  - Enunciado de la tarea integradora (PDF de la asignatura).
+  - Repositorio del equipo, incluido el contrato de interfaces (`docs/contracts.md`) y el plan de división del trabajo acordado por el equipo (Alejo, Diego, Edwar).
+  - Restricciones del estudiante: mínimo 10 commits por integrante con al menos 2 horas entre cada uno, commits a su nombre, trabajo de Diego en la rama `diego/profiles-recognition`, sin incluir diapositivas en el cronograma.
+- **Prompts principales (literales):**
+  - "Revisa y analiza el repo que tenemos hasta ahora, tengo entendido que ya mi compañero Alejandro ha avanzado y nos dividió el trabajo pero lo hizo como por persona y no por nombre exacto, revisa todo antes de empezar a codear"
+  - "Arranca solucionando todos los problemas, ademas son 10 commits cada uno cada 2 horas, toma las decisiones pertinentes y subelo directo a la Main, con base a eso ya luego me colocas a mi una asignacion de commits que hacer para terminar todo lo mio con minimo 10 commits"
+  - "Es que son 10 cada uno, organiza nuestro cronograma interno, no tengas en mente las diapositivas"
+- **Resultados generados y utilizados:**
+  - Corrección del andamiaje: `__init__.py`, `requirements.txt`, `pyproject.toml`, `.gitattributes`, `.gitignore`, `candidate.tx`; módulos compartidos `models.py`, `errors.py`, `vocabulary.py`, `vocabulary.json`.
+  - Perfiles y cargador con las validaciones de la Sección 7.3 del contrato; ordenamiento por perfil; un ε-NFA por perfil construido desde los slots, DFA equivalente y DFA mínimo; exportación de la 5-tupla; diagramas Mermaid/Graphviz/SVG.
+  - Documentos: sección 3 de `docs/formalization.md`, `docs/literature_review.md`, `docs/profiles.md`, sección 4 de `docs/test_cases.md`, secciones 3.3–3.6 de `docs/design_modules.md`.
+  - Pruebas: `test_vocabulary.py`, `test_models.py`, `test_profiles.py`, `test_sorting.py`, `test_recognition.py`, `test_automata.py`, `test_diagrams.py`, `test_recognition_scenarios.py`.
+- **Decisiones y cambios respecto a lo generado:**
+  - Se quitó la atribución de coautoría de la IA de los mensajes de commit por decisión del estudiante.
+  - El ejemplo de `classify` de la Sección 6.4 del contrato tenía un error (secuencia vacía para Full Stack); las pruebas lo detectaron y se corrigió en el contrato (v1.3).
+  - Las referencias de la revisión de literatura se verificaron en ACL Anthology y en las páginas de los editores; se eliminaron los datos bibliográficos que no se pudieron confirmar.
+  - Al integrar `main` se corrigió la ruta fija `"profiles/"` del pipeline para que funcione fuera de la raíz del repositorio.
+- **Verificación por el estudiante:** *(pendiente: completar con lo que el estudiante revisó y entiende de cada parte antes de la sustentación)*
