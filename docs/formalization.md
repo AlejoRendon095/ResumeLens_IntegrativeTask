@@ -227,7 +227,205 @@ We use the ε-NFA as the model because it is a direct, slot-by-slot translation 
 | PYTHON PANDAS TENSORFLOW POSTGRESQL GIT (assignment, Stage 3 example) | same path with one token per slot | ACCEPTED |
 | PYTHON PANDAS SQL GIT | in q2 the next symbol is SQL, but q2 only reads ML libraries | REJECTED (no ML library) |
 
-> Sections 3.6 (DevOps Engineer), 3.7 (Data Engineer) and 3.8 (design discussion and limitations) are added in the next revision.
+### 3.6 DevOps Engineer (`DEVOPS_ENGINEER`, team-defined, software engineering)
+
+**Profile pattern.** A DevOps Engineer builds, ships and operates software, so the pattern follows the delivery chain: an operating system to work on (Linux), version control, a CI/CD practice, containers and a cloud provider. Container orchestration (Kubernetes) is common but not universal in junior profiles, so it is optional. The profile reuses `GIT` from the reference profiles and adds five tokens to the vocabulary (`LINUX`, `CI_CD`, `DOCKER`, `KUBERNETES`, `AWS`). This profile is provisional until the professor publishes the requirements of the team-defined profiles; changing it only means editing `profiles/devops_engineer.json`.
+
+| Slot | Category | Tokens (`any_of`) | Repetition |
+|---|---|---|---|
+| 1 | OPERATING_SYSTEM | `LINUX` | mandatory (`+`) |
+| 2 | VERSION_CONTROL | `GIT` | mandatory (`+`) |
+| 3 | CI_CD | `CI_CD` | mandatory (`+`) |
+| 4 | CONTAINER | `DOCKER` | mandatory (`+`) |
+| 5 | ORCHESTRATION | `KUBERNETES` | optional (`*`) |
+| 6 | CLOUD | `AWS` | mandatory (`+`) |
+
+**Language recognized** (regular expression over Σ, `|` = union, `+` = one or more, `*` = zero or more):
+
+```
+(LINUX)+ (GIT)+ (CI_CD)+ (DOCKER)+ (KUBERNETES)* (AWS)+
+```
+
+**Formal definition (ε-NFA).** M = (Q, Σ, δ, q0, F) where
+
+* Q = {q0, q1, q2, q3, q4, q5, q6, p0, p1, p2, p3, p4, p5} (13 states)
+* Σ = {LINUX, GIT, CI_CD, DOCKER, KUBERNETES, AWS}
+* Initial state: q0
+* F = {q6}
+* δ : Q × (Σ ∪ {ε}) → P(Q) is given by the table below (every pair not listed maps to ∅):
+
+| From | Reads | To |
+|---|---|---|
+| q0 | `LINUX` | p0 |
+| p0 | `LINUX` | p0 |
+| p0 | `ε` | q1 |
+| q1 | `GIT` | p1 |
+| p1 | `GIT` | p1 |
+| p1 | `ε` | q2 |
+| q2 | `CI_CD` | p2 |
+| p2 | `CI_CD` | p2 |
+| p2 | `ε` | q3 |
+| q3 | `DOCKER` | p3 |
+| p3 | `DOCKER` | p3 |
+| p3 | `ε` | q4 |
+| q4 | `KUBERNETES` | p4 |
+| q4 | `ε` | q5 |
+| p4 | `KUBERNETES` | p4 |
+| p4 | `ε` | q5 |
+| q5 | `AWS` | p5 |
+| p5 | `AWS` | p5 |
+| p5 | `ε` | q6 |
+
+**Transition diagram.**
+
+![DEVOPS_ENGINEER ε-NFA](diagrams/devops_engineer_enfa.svg)
+
+(Mermaid source: [`diagrams/devops_engineer_enfa.mmd`](diagrams/devops_engineer_enfa.mmd); all diagrams are also rendered in [`diagrams/automata.md`](diagrams/automata.md).)
+
+**Equivalent minimal DFA.** Subset construction plus minimization gives 7 states, Q = {D0, D1, D2, D3, D4, D5, D6}, q0 = D0, F = {D6}, δ a partial function Q × Σ → Q (missing pairs go to an implicit dead state):
+
+| From | Reads | To |
+|---|---|---|
+| D0 | `LINUX` | D1 |
+| D1 | `LINUX` | D1 |
+| D1 | `GIT` | D2 |
+| D2 | `GIT` | D2 |
+| D2 | `CI_CD` | D3 |
+| D3 | `CI_CD` | D3 |
+| D3 | `DOCKER` | D4 |
+| D4 | `DOCKER` | D4 |
+| D4 | `KUBERNETES` | D5 |
+| D4 | `AWS` | D6 |
+| D5 | `KUBERNETES` | D5 |
+| D5 | `AWS` | D6 |
+| D6 | `AWS` | D6 |
+
+![DEVOPS_ENGINEER minimal DFA](diagrams/devops_engineer_dfa.svg)
+
+**Examples.**
+
+| Sorted sequence (Stage 2b output) | Run of the ε-NFA | Result |
+|---|---|---|
+| LINUX GIT CI_CD DOCKER AWS | q0 →LINUX p0 →ε q1 →GIT p1 →ε q2 →CI_CD p2 →ε q3 →DOCKER p3 →ε q4 →ε q5 →AWS p5 →ε q6 | ACCEPTED (Kubernetes skipped) |
+| LINUX GIT CI_CD DOCKER KUBERNETES AWS | the orchestration slot is used: q4 →KUBERNETES p4 →ε q5 | ACCEPTED |
+| LINUX GIT DOCKER AWS | in q2 the next symbol is DOCKER, but q2 only reads `CI_CD` | REJECTED (no CI/CD) |
+| GIT (the Mary Jane Watson résumé, filtered for this profile) | q0 has no transition on GIT | REJECTED |
+
+### 3.7 Data Engineer (`DATA_ENGINEER`, team-defined, AI/data)
+
+**Profile pattern.** A Data Engineer builds the pipelines that feed analytics and machine learning. The pattern asks for Python, a SQL database, a distributed processing engine (Spark) and version control. Workflow orchestration (Airflow) and streaming (Kafka) are frequent but depend on the company, so both slots are optional; this is the only profile with two consecutive optional slots, which the ε-NFA handles with two chained ε-edges (q3 →ε q4 →ε q5). New tokens: `SPARK`, `AIRFLOW`, `KAFKA`. Provisional, like the DevOps profile.
+
+| Slot | Category | Tokens (`any_of`) | Repetition |
+|---|---|---|---|
+| 1 | LANGUAGE | `PYTHON` | mandatory (`+`) |
+| 2 | DATABASE | `SQL`, `POSTGRESQL`, `MYSQL` | mandatory (`+`) |
+| 3 | PROCESSING | `SPARK` | mandatory (`+`) |
+| 4 | WORKFLOW | `AIRFLOW` | optional (`*`) |
+| 5 | STREAMING | `KAFKA` | optional (`*`) |
+| 6 | VERSION_CONTROL | `GIT` | mandatory (`+`) |
+
+**Language recognized** (regular expression over Σ, `|` = union, `+` = one or more, `*` = zero or more):
+
+```
+(PYTHON)+ (SQL | POSTGRESQL | MYSQL)+ (SPARK)+ (AIRFLOW)* (KAFKA)* (GIT)+
+```
+
+**Formal definition (ε-NFA).** M = (Q, Σ, δ, q0, F) where
+
+* Q = {q0, q1, q2, q3, q4, q5, q6, p0, p1, p2, p3, p4, p5} (13 states)
+* Σ = {PYTHON, SQL, POSTGRESQL, MYSQL, SPARK, AIRFLOW, KAFKA, GIT}
+* Initial state: q0
+* F = {q6}
+* δ : Q × (Σ ∪ {ε}) → P(Q) is given by the table below (every pair not listed maps to ∅):
+
+| From | Reads | To |
+|---|---|---|
+| q0 | `PYTHON` | p0 |
+| p0 | `PYTHON` | p0 |
+| p0 | `ε` | q1 |
+| q1 | `SQL`, `POSTGRESQL`, `MYSQL` | p1 |
+| p1 | `SQL`, `POSTGRESQL`, `MYSQL` | p1 |
+| p1 | `ε` | q2 |
+| q2 | `SPARK` | p2 |
+| p2 | `SPARK` | p2 |
+| p2 | `ε` | q3 |
+| q3 | `AIRFLOW` | p3 |
+| q3 | `ε` | q4 |
+| p3 | `AIRFLOW` | p3 |
+| p3 | `ε` | q4 |
+| q4 | `KAFKA` | p4 |
+| q4 | `ε` | q5 |
+| p4 | `KAFKA` | p4 |
+| p4 | `ε` | q5 |
+| q5 | `GIT` | p5 |
+| p5 | `GIT` | p5 |
+| p5 | `ε` | q6 |
+
+**Transition diagram.**
+
+![DATA_ENGINEER ε-NFA](diagrams/data_engineer_enfa.svg)
+
+(Mermaid source: [`diagrams/data_engineer_enfa.mmd`](diagrams/data_engineer_enfa.mmd); all diagrams are also rendered in [`diagrams/automata.md`](diagrams/automata.md).)
+
+**Equivalent minimal DFA.** Subset construction plus minimization gives 7 states, Q = {D0, D1, D2, D3, D4, D5, D6}, q0 = D0, F = {D6}, δ a partial function Q × Σ → Q (missing pairs go to an implicit dead state):
+
+| From | Reads | To |
+|---|---|---|
+| D0 | `PYTHON` | D1 |
+| D1 | `PYTHON` | D1 |
+| D1 | `SQL`, `POSTGRESQL`, `MYSQL` | D2 |
+| D2 | `SQL`, `POSTGRESQL`, `MYSQL` | D2 |
+| D2 | `SPARK` | D3 |
+| D3 | `SPARK` | D3 |
+| D3 | `AIRFLOW` | D4 |
+| D3 | `KAFKA` | D5 |
+| D3 | `GIT` | D6 |
+| D4 | `AIRFLOW` | D4 |
+| D4 | `KAFKA` | D5 |
+| D4 | `GIT` | D6 |
+| D5 | `KAFKA` | D5 |
+| D5 | `GIT` | D6 |
+| D6 | `GIT` | D6 |
+
+![DATA_ENGINEER minimal DFA](diagrams/data_engineer_dfa.svg)
+
+**Examples.**
+
+| Sorted sequence (Stage 2b output) | Run of the ε-NFA | Result |
+|---|---|---|
+| PYTHON SQL SPARK GIT | q0 →PYTHON p0 →ε q1 →SQL p1 →ε q2 →SPARK p2 →ε q3 →ε q4 →ε q5 →GIT p5 →ε q6 | ACCEPTED (both optional slots skipped) |
+| PYTHON POSTGRESQL SPARK AIRFLOW KAFKA GIT | every slot used once | ACCEPTED |
+| PYTHON SQL GIT (the Mary Jane Watson résumé, filtered for this profile) | in q2 the next symbol is GIT, but q2 only reads `SPARK` | REJECTED (no processing engine) |
+
+### 3.8 Summary, design decisions and limitations
+
+**The four automata at a glance** (counts generated from the code):
+
+| Profile | Slots | Optional slots | \|Σ\| | ε-NFA states | ε-NFA transitions | Minimal DFA states | Minimal DFA transitions |
+|---|---|---|---|---|---|---|---|
+| Full Stack Developer | 6 | 1 | 14 | 13 | 35 (7 ε) | 7 | 29 |
+| Machine Learning Engineer | 6 | 1 | 11 | 13 | 29 (7 ε) | 7 | 25 |
+| DevOps Engineer | 6 | 1 | 6 | 13 | 19 (7 ε) | 7 | 13 |
+| Data Engineer | 6 | 2 | 8 | 13 | 24 (8 ε) | 7 | 19 |
+
+**Design decisions.**
+
+| Decision | Alternative considered | Why we chose it |
+|---|---|---|
+| One symbol per canonical token (Σ = tokens of the profile) | Automata over characters | The transducers of Stage 2 already turn character strings into tokens; reading characters again would mix two stages and blow up the number of states. |
+| Filter and sort the tokens before the automaton (Stage 2b) | Self-loops on every foreign token in every state | With filtering, Σ stays small and each automaton describes only its profile. A résumé that also lists Docker or Figma is not rejected for that, and the result does not depend on the order in which the candidate wrote the skills. |
+| One or more tokens per slot | Exactly one token per slot (the example diagram of the assignment) | The reference résumé of Mary Jane Watson lists Pandas *and* NumPy, Scikit-learn *and* TensorFlow; a one-token-per-slot automaton would reject the assignment's own example. |
+| Optional slots (`REST_API`, `ML_MODEL_DEVELOPMENT`, `KUBERNETES`, `AIRFLOW`, `KAFKA`) | Make every listed qualification mandatory | The reference résumés are expected to be accepted without REST or an explicit "ML model development" token. An ε-edge expresses "may be absent" without duplicating states. |
+| ε-NFA as the formal model, minimal DFA as its proof of determinism | Write the DFA by hand | The ε-NFA is a mechanical translation of the profile file, so the four automata come from one function. The DFA is derived automatically and checked to be equivalent by the tests. |
+| Profiles as JSON data | One Python class per profile | The assignment requires one general solution for all profiles. Replacing the two provisional profiles needs no code change. |
+
+**Limitations.**
+
+* **Presence, not proficiency.** The automata only check that a qualification is *written* in the résumé. They do not measure level, years per technology or the quality of the experience.
+* **Closed vocabulary.** A technology that is not in `vocabulary.json` (for example "Svelte" or "GCP") never reaches the automata, so a valid candidate can be rejected until the vocabulary and the profile are extended.
+* **Slots are a conjunction of disjunctions.** Every profile is "at least one of these AND at least one of those". Rules such as "Kubernetes only counts if Docker is present", or "two of these three", need a different construction (product automata or counters).
+* **The language is slightly larger than the reachable inputs.** Inside a slot, the loop accepts tokens in any order, while Stage 2b always sends them in `any_of` order. This never changes a result, but the automaton alone would accept sequences that the pipeline cannot produce.
+* **Provisional team profiles.** DevOps Engineer and Data Engineer were defined by the team while the professor's requirements were pending; they may change.
 
 
 ## EBNF
