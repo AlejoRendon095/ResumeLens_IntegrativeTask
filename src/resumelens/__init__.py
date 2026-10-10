@@ -10,6 +10,7 @@ Pipeline (see docs/contracts.md):
 4b. Visualization    -> HTML / Markdown          (render.py)
 """
 
+from resumelens.app import main
 from resumelens.dsl import to_dsl, validate
 from resumelens.errors import (
     DSLValidationError,
@@ -46,6 +47,7 @@ __all__ = [
     "ResumeLensError",
     "VocabularyError",
     "__version__",
+    "main",
     "run",
     "to_dsl",
     "to_html",
