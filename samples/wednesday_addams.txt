@@ -1,0 +1,5 @@
+Wednesday Addams
+wednesday@nevermore.edu | https://github.com/wednesday
+3 years of experience developing web applications.
+Technical Skills:
+JS, React.js, NodeJS, Postgres, Git.

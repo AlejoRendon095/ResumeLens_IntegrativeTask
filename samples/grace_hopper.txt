@@ -1,0 +1,5 @@
+Grace Hopper
+grace.hopper@navy.mil | https://github.com/ghopper
+8 years of experience designing high-throughput data processing pipelines.
+Technical Skills:
+Python, SQL, Spark, Airflow, Kafka, Git.

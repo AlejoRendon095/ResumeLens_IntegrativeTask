@@ -1,0 +1,5 @@
+Linus Torvalds
+linus@kernel.org | https://github.com/torvalds
+10 years of experience building scalable systems and infrastructure.
+Technical Skills:
+Linux, Git, CI/CD, Docker, Kubernetes, AWS.

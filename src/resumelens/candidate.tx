@@ -1,14 +1,62 @@
-/*
-  ResumeLens - Candidate Profile Language (textX grammar)
-  Responsible: Edwar
+CandidateModel:
+  'candidate' name=STRING '{'
+    (contact=ContactBlock)?
+    education*=EducationBlock
+    experience*=ExperienceBlock
+    (skills=SkillsBlock)?
+    classification=ClassificationBlock
+  '}'
+;
 
-  TODO: define the context-free grammar of the candidate DSL
-  (docs/contracts.md, Section 6.5; EBNF in docs/formalization.md).
-  It must represent: personal information, contact information,
-  education records (repeated), professional experiences (repeated),
-  skills (canonical tokens, repeated) and the classification result
-  (ACCEPTED | REJECTED) for each of the four profiles.
+ContactBlock:
+  'contact' '{'
+    (
+      ('email' emails+=STRING) |
+      ('phone' phones+=STRING) |
+      ('link' links+=STRING)
+    )*
+  '}'
+;
 
-  This file was renamed from candidate.py: textX grammars use the .tx
-  extension and are loaded with textx.metamodel_from_file().
-*/
+EducationBlock:
+  'education' '{'
+    ('degree' degree=STRING)?
+    ('institution' institution=STRING)?
+    ('year' year=STRING)?
+  '}'
+;
+
+ExperienceBlock:
+  'experience' '{'
+    ('years' years=NUMBER)?
+    ('description' description=STRING)?
+  '}'
+;
+
+SkillsBlock:
+  'skills' '{'
+    skills*=SkillToken
+  '}'
+;
+
+SkillToken:
+  /[A-Z][A-Z_]*/
+;
+
+ClassificationBlock:
+  'classification' '{'
+    entries+=ProfileClassification
+  '}'
+;
+
+ProfileClassification:
+  profile_id=ProfileId ':' verdict=Verdict
+;
+
+ProfileId:
+  /[A-Z][A-Z_]*/
+;
+
+Verdict:
+  'ACCEPTED' | 'REJECTED'
+;
