@@ -6,12 +6,18 @@ This document formalizes the validation test suite and evaluation scenarios for 
 
 ## 1. Test Suite Structure
 
-The ResumeLens verification framework is divided into five test modules:
+The ResumeLens verification framework is divided into the following test modules:
 
 | Test Module | Coverage | Associated Stage |
 |---|---|---|
 | `test_extraction.py` | Regular expression pattern matching for contact, education, experience, and raw skills. | Stage 1 (Regex) |
 | `test_vocabulary.py` | Canonical vocabulary integrity, alphabet compliance ($\Sigma$ and $\Gamma$), rules of Section 3.2. | Core Shared |
+| `test_profiles.py` | Profile files: the four project profiles load in order; validation rules of contract Section 7.3. | Profiles (configuration) |
+| `test_sorting.py` | Filtering and canonical ordering by profile; permutation independence; no mutation. | Stage 2b (Sorting) |
+| `test_recognition.py` | ε-NFA built from the slots; classification of the contract and assignment examples. | Stage 3 (FSA) |
+| `test_automata.py` | ε-NFA ≡ DFA ≡ minimal DFA for the four profiles; 5-tuple export; invariants 3, 4, 5, 7. | Stage 3 (FSA) |
+| `test_diagrams.py` | Mermaid / Graphviz diagrams contain every transition, initial and accepting states. | Stage 3 (docs) |
+| `test_recognition_scenarios.py` | Scenarios S2B-1…4 and S3-1…7 below, run through the complete pipeline. | Stages 2b + 3 |
 | `test_dsl.py` | Context-free grammar syntax, textX parsing, round-trip serialization, and syntax rejection. | Stage 4 (CFG) |
 | `test_render.py` | HTML / Markdown generation, structural completeness, CSS styling, and XSS escaping. | Stage 4b (Render) |
 | `test_pipeline.py` | Orchestration, stage resolution, error propagation, and contract invariants. | Pipeline Core |
@@ -132,3 +138,49 @@ The test suite systematically enforces the following contract invariants (Sectio
 5. **Cardinality Invariance:** Exactly four `ProfileResult` objects are returned, corresponding to the configured profiles.
 6. **DSL Round-Trip Invariance:** For every pipeline execution, $\text{validate}(\text{to\_dsl}(\dots))$ succeeds without error.
 7. **Immutability Invariance:** Intermediate dataclasses are not mutated during stage execution.
+
+---
+
+## 4. Stages 2b and 3 — Sorting and Qualification Pattern Recognition
+
+*Owner: Diego. Automated in `tests/test_recognition_scenarios.py` (complete pipeline) and, at unit level, in `tests/test_sorting.py`, `tests/test_recognition.py` and `tests/test_automata.py`.*
+
+Each scenario is a short résumé whose `Technical Skills` line is given below. "Sequence" is what the automaton of that profile reads after Stage 2b (filtered and sorted).
+
+### 4.1 Stage 2b — what each automaton reads
+
+| ID | Skills line | Profile | Expected sequence | What it checks |
+|---|---|---|---|---|
+| S2B-1 | Git, MySQL, Django, Vue, TypeScript | Full Stack | TYPESCRIPT VUE DJANGO MYSQL GIT | Canonical order does not depend on the writing order. |
+| S2B-2 | TypeScript, Vue, Django, MySQL, Git, Docker, Figma | Full Stack | TYPESCRIPT VUE DJANGO MYSQL GIT | `DOCKER` (other profile) is filtered out; `Figma` is reported as unrecognized; the profile is still accepted. |
+| S2B-3 | JS, Javascript, ReactJS, React.js, Node.js, MongoDB, REST APIs, Git | Full Stack | JAVASCRIPT REACT NODE_JS MONGODB REST_API GIT | Two aliases of the same technology become one symbol. |
+| S2B-4 | Python, PostgreSQL, Spark, Git, Linux | Data Engineer / DevOps | PYTHON POSTGRESQL SPARK GIT / LINUX GIT | One résumé produces a different word for each automaton. |
+
+### 4.2 Stage 3 — accepted patterns
+
+| ID | Skills line | Expected accepted profiles | What it checks |
+|---|---|---|---|
+| S3-1 | JS, React.js, Node.js, MongoDB, REST APIs, Git | Full Stack | Optional slot (REST) used: path q4 →REST_API p4 →ε q5. |
+| S3-2 | tensor flow, py torch, sklearn, num py, python3, sql, git | ML Engineer | Lower-case and spaced aliases; two ML libraries read by the slot loop. |
+| S3-3 | Ubuntu, Git, CI/CD, Docker, K8s, AWS | DevOps | Alias tokens (Ubuntu → LINUX, K8s → KUBERNETES); optional orchestration slot used. |
+| S3-4 | Python, SQL, PySpark, Git | Data Engineer | Two consecutive optional slots skipped: q3 →ε q4 →ε q5. |
+| S3-5 | Python, Pandas, Scikit-learn, PostgreSQL, Spark, Airflow, Git | ML Engineer **and** Data Engineer | A résumé can satisfy several profiles; the result is not a ranking. |
+
+### 4.3 Stage 3 — rejected patterns
+
+| ID | Skills line | Missing mandatory slot | Expected result |
+|---|---|---|---|
+| S3-6a | JavaScript, React, Git | Backend and database | Rejected by every profile |
+| S3-6b | Linux, Git, Docker, AWS | CI/CD | Rejected by every profile |
+| S3-6c | Python, Pandas, SQL, Git | ML library | Rejected by every profile |
+| S3-6d | Python, PostgreSQL, Airflow, Kafka, Git | Processing engine (Spark) | Rejected by every profile |
+| S3-7 | *(no skills section)* | All | Every sequence is empty and every profile rejects |
+
+### 4.4 Properties checked on the automata
+
+| Property | How it is tested |
+|---|---|
+| The ε-NFA, the subset-construction DFA and the minimal DFA accept the same language | `is_equivalent_to` from pyformlang, 300 random words per profile and every word of length ≤ 6 for DevOps (`test_automata.py`). |
+| The automaton alone requires slot order | An unsorted word (`REACT JAVASCRIPT …`) is rejected by `recognize` (`test_recognition.py`); in the pipeline Stage 2b always sorts first. |
+| Adding a token outside the profile never changes its verdict | Every token of the vocabulary that is not in the profile is added to five résumés (`test_automata.py`, invariant 4). |
+| Profile files are valid | Overlapping slots, unknown tokens, empty or all-optional profiles and duplicated ids raise `ProfileConfigError` (`test_profiles.py`). |

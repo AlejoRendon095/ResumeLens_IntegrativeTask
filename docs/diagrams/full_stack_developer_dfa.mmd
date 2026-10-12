@@ -1,0 +1,24 @@
+%% FULL_STACK_DEVELOPER - Minimal DFA
+flowchart LR
+    start(( )) --> D0
+    D0((D0))
+    D1((D1))
+    D2((D2))
+    D3((D3))
+    D4((D4))
+    D5((D5))
+    D6(((D6)))
+    D0 -- "JAVASCRIPT | TYPESCRIPT" --> D1
+    D1 -- "JAVASCRIPT | TYPESCRIPT" --> D1
+    D1 -- "REACT | ANGULAR | VUE" --> D2
+    D2 -- "REACT | ANGULAR | VUE" --> D2
+    D2 -- "NODE_JS | DJANGO | SPRING_BOOT" --> D3
+    D3 -- "NODE_JS | DJANGO | SPRING_BOOT" --> D3
+    D3 -- "SQL | POSTGRESQL | MYSQL | MONGODB" --> D4
+    D4 -- "SQL | POSTGRESQL | MYSQL | MONGODB" --> D4
+    D4 -- "REST_API" --> D5
+    D4 -- "GIT" --> D6
+    D5 -- "REST_API" --> D5
+    D5 -- "GIT" --> D6
+    D6 -- "GIT" --> D6
+    style start fill:none,stroke:none
