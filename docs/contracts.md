@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Document | `docs/contracts.md` |
-| Version | 1.3 |
-| Date | 2026-10-09 |
+| Version | 1.4 |
+| Date | 2026-10-12 |
 | Authors | Alejo, Diego, Edwar |
 | Status | Agreed by all members (Sync 1) |
 
@@ -636,13 +636,19 @@ Each invariant should have at least one automated test (`tests/`).
 | 1.1 | 2026-10-09 | Diego | Repository fixes: package `__init__.py`, `requirements.txt`, `pyproject.toml`, `.gitattributes` (LF), `candidate.tx` extension, profile files renamed to `devops_engineer.json` / `data_engineer.json`. Shared code created as specified in Sections 3, 5 and 9 (`models.py`, `errors.py`, `vocabulary.py`, `vocabulary.json`). `load_profiles()` placed in `profiles.py`. No interface was changed. |
 | 1.2 | 2026-10-09 | Diego | Optional `order` key in the profile format (Section 7.1) so the four results always come out as Full Stack, ML, DevOps, Data. The four profile files filled in as listed in Section 7.4. |
 | 1.3 | 2026-10-09 | Diego | Fix the `classify` example of Section 6.4: the Full Stack sequence is `["POSTGRESQL", "GIT"]` (both tokens belong to Full Stack slots), not `[]`. Stage 3 automata documented as ε-NFAs built from the slots. |
+| 1.4 | 2026-10-12 | Diego | Section 14 updated: closed the items already resolved in the repository (alias list, automaton type, EBNF). No interface was changed. |
 
 ## 14. Open items
 
 | Item | Owner | Notes |
 |---|---|---|
 | Final requirements of the two team-defined profiles | Professor / all | Profiles 3 and 4 in Section 7.4 are provisional. |
-| Final alias list | Alejo | Extend with real résumé variants found while testing the regex stage. |
-| Automaton type per profile (DFA / NFA / ε-NFA) | Diego | Justify in `docs/formalization.md`. |
-| EBNF of the candidate language | Edwar | Lives in `docs/formalization.md` and `candidate.tx`. |
+
+Closed items:
+
+| Item | Owner | Resolution |
+|---|---|---|
+| Final alias list | Alejo | Closed: aliases for the 30 tokens in `vocabulary.json`; the 30 transducers are listed in `docs/formalization.md` (Section 2.10). |
+| Automaton type per profile (DFA / NFA / ε-NFA) | Diego | Closed: one ε-NFA per profile built from its slots, plus the equivalent DFA and minimal DFA; justified in `docs/formalization.md` (Section 3.3). |
+| EBNF of the candidate language | Edwar | Closed: `docs/formalization.md` (Section 4) and `src/resumelens/candidate.tx`. |
 | Short or ambiguous aliases (`ts`, `tf`, `ml`, `py`, `torch`, `node`) | Alejo, Diego | Keep only if tests show no false positives. |

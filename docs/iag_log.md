@@ -155,7 +155,10 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - `docs/literature_review.md` con revisión teórica completa, tabla comparativa y referencias académicas en formato APA/IEEE.
 - **Adaptaciones y cambios realizados:**
   - Redacción en inglés formal y rigor matemático en la nomenclatura.
-## Sesión 8 — 2026-10-09 / 2026-10-10 (Juan Diego Balanta Molina — Diego)
+
+---
+
+## Sesión 9 — 2026-10-09 / 2026-10-10 (Juan Diego Balanta Molina — Diego)
 
 - **Fechas:** 2026-10-09 y 2026-10-10 (trabajo distribuido en commits separados por al menos 2 horas).
 - **Herramienta:** Claude (Anthropic), en una sesión de trabajo con acceso al repositorio.
@@ -179,3 +182,26 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - Las referencias de la revisión de literatura se verificaron en ACL Anthology y en las páginas de los editores; se eliminaron los datos bibliográficos que no se pudieron confirmar.
   - Al integrar `main` se corrigió la ruta fija `"profiles/"` del pipeline para que funcione fuera de la raíz del repositorio.
 - **Verificación por el estudiante:** *(pendiente: completar con lo que el estudiante revisó y entiende de cada parte antes de la sustentación)*
+
+---
+
+## Sesión 10 — 2026-10-12 (Juan Diego Balanta Molina — Diego)
+
+- **Fecha:** 2026-10-12
+- **Herramienta:** Claude (Anthropic), en una sesión de trabajo con acceso al repositorio.
+- **Objetivo:** Revisar el estado de `main` frente a la tarea integradora y corregir los problemas de documentación encontrados.
+- **Prompts principales (literales):**
+  - "Revisa la main para saber como estamos en completitud de la tarea"
+  - "Hay algo que pueda hacer yo? (Es decir mi Claude)"
+  - "Bueno, haz lo que puedas hacer tu y lo subes a main"
+- **Resultados generados y utilizados:**
+  - Revisión de `main`: 249 pruebas pasando y el CLI con los resultados esperados para las 5 hojas de vida de `samples/`.
+  - `docs/literature_review.md`: numeración de secciones corregida tras el merge (faltaba la sección 2), cita de Sipser unificada (2012), referencias que faltaban (Chomsky 1956, Ford 2004, Friedl 2006) y datos completos de Dejanović et al. (2017). La fila de riesgo ético de la tabla comparativa se reformuló: el sistema no "elimina" el sesgo, porque la elección de perfiles, vocabulario y alias es humana.
+  - `docs/formalization.md`: niveles de título de las Partes 1 y 2 alineados con las secciones 3 y 4 (sin cambios de contenido).
+  - `docs/contracts.md` v1.4: cerrados los puntos abiertos ya resueltos (alias, tipo de autómata, EBNF).
+  - `README.md`: número de pruebas actualizado (249) y enlaces a `profiles.md` y `literature_review.md`.
+  - Este registro: la segunda "Sesión 8" pasa a ser la Sesión 9.
+- **Decisiones y cambios respecto a lo generado:**
+  - Los perfiles 3 y 4 siguen marcados como provisionales hasta que el profesor confirme sus requisitos.
+  - No se modificó el contenido técnico de las secciones de Alejo y Edwar, solo la numeración, las citas y una afirmación de la tabla comparativa.
+- **Verificación por el estudiante:** *(pendiente: completar con lo que el estudiante revisó antes de la sustentación)*
