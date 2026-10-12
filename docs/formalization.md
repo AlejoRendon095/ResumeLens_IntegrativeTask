@@ -428,6 +428,128 @@ The relation realized by `M_t` is the finite set `{ (a, t) : a ∈ A_t }`: every
 
 Guarantees (contract section 10): `mapping` keys and `unrecognized` are disjoint and together equal the set of raw strings; every token belongs to the vocabulary; tokens have no duplicates; the input is not modified; the result is deterministic.
 
+## 2.7 Fully worked example: `JAVASCRIPT`
+
+Aliases: `js`, `javascript`, `java script`, `ecmascript`.
+
+* `Q = {0, 1, ..., 33}` (34 states)
+* `Σ` (declared) as in section 2.5. **Symbols actually used:** space and `a c e i j m p r s t v`.
+* `Γ` (actually used) = `{J, A, V, S, C, R, I, P, T}`
+* `q0 = 0`
+* `F = {2, 12, 23, 33}`
+
+Transitions `δ` and outputs `ω` (`J·A·V·A·S·C·R·I·P·T` is the output `JAVASCRIPT`; `ε` is the empty output):
+
+| Alias | From | Input | To | Output |
+|---|---:|---|---:|---|
+| `js` | 0 | `j` | 1 | ε |
+| | 1 | `s` | 2 | JAVASCRIPT |
+| `javascript` | 0 | `j` | 3 | ε |
+| | 3 | `a` | 4 | ε |
+| | 4 | `v` | 5 | ε |
+| | 5 | `a` | 6 | ε |
+| | 6 | `s` | 7 | ε |
+| | 7 | `c` | 8 | ε |
+| | 8 | `r` | 9 | ε |
+| | 9 | `i` | 10 | ε |
+| | 10 | `p` | 11 | ε |
+| | 11 | `t` | 12 | JAVASCRIPT |
+| `java script` | 0 | `j` | 13 | ε |
+| | 13 | `a` | 14 | ε |
+| | 14 | `v` | 15 | ε |
+| | 15 | `a` | 16 | ε |
+| | 16 | (space) | 17 | ε |
+| | 17 | `s` | 18 | ε |
+| | 18 | `c` | 19 | ε |
+| | 19 | `r` | 20 | ε |
+| | 20 | `i` | 21 | ε |
+| | 21 | `p` | 22 | ε |
+| | 22 | `t` | 23 | JAVASCRIPT |
+| `ecmascript` | 0 | `e` | 24 | ε |
+| | 24 | `c` | 25 | ε |
+| | 25 | `m` | 26 | ε |
+| | 26 | `a` | 27 | ε |
+| | 27 | `s` | 28 | ε |
+| | 28 | `c` | 29 | ε |
+| | 29 | `r` | 30 | ε |
+| | 30 | `i` | 31 | ε |
+| | 31 | `p` | 32 | ε |
+| | 32 | `t` | 33 | JAVASCRIPT |
+
+That is 2 + 10 + 11 + 10 = 33 transitions, and 33 + 1 = 34 states. Any other pair (state, symbol) has no transition.
+
+**Non-determinism.** From state `0` on the symbol `j` the machine can go to states `1`, `3` or `13`, one for each alias that starts with `j`. The machine is therefore **non-deterministic** in its transition structure. This does not make the output ambiguous: aliases are unique across the vocabulary, only a **complete** path ending in a final state produces output, and every complete path of `M_JAVASCRIPT` produces the same token.
+
+**Why `java` is not accepted.** After reading `j-a-v-a` the machine can only be in state `6` (path of `javascript`) or state `16` (path of `java script`); neither is in `F`. Without an accepting state there is no output, so `java` is not translated by `M_JAVASCRIPT`. The transducer of the token `JAVA`, whose only alias is `java`, does accept it.
+
+## 2.8 Small example: `GIT`
+
+Alias: `git`.
+
+* `Q = {0, 1, 2, 3}`, `q0 = 0`, `F = {3}`
+* `Σ` used: `g`, `i`, `t`. `Γ` used: `G`, `I`, `T`.
+
+| From | Input | To | Output |
+|---:|---|---:|---|
+| 0 | `g` | 1 | ε |
+| 1 | `i` | 2 | ε |
+| 2 | `t` | 3 | GIT |
+
+## 2.9 Worked trace
+
+For the raw string `"  React.js, "` (aliases of `REACT`: `react`, `react.js`, `reactjs`, `react js`):
+
+1. `preprocess("  React.js, ")` = `"react.js"`.
+2. In `M_REACT`, from state `0` on `r` the machine can go to states `1`, `6`, `14` and `21` (one per alias).
+3. Only the branch of the alias `react.js` can continue with `e`, `a`, `c`, `t`, `.`: `6 → 7 → 8 → 9 → 10 → 11`.
+4. Then `j` leads to `12` and `s` leads to `13`, which is final, and the last transition emits `REACT`.
+5. The other transducers (`JAVASCRIPT`, `NODE_JS`, ...) do not accept `react.js`, so exactly one machine accepts it, and `mapping["  React.js, "] = "REACT"` (the key is the original string).
+
+## 2.10 Data of the 30 transducers
+
+Counted from the real vocabulary (30 canonical tokens, 80 aliases). "States" includes state 0; "Transitions" counts the transitions of the alias paths.
+
+| Token | Aliases | States | Transitions | Final states |
+|---|---:|---:|---:|---:|
+| JAVASCRIPT | 4 | 34 | 33 | 4 |
+| TYPESCRIPT | 3 | 24 | 23 | 3 |
+| PYTHON | 3 | 16 | 15 | 3 |
+| JAVA | 1 | 5 | 4 | 1 |
+| SQL | 1 | 4 | 3 | 1 |
+| REACT | 4 | 29 | 28 | 4 |
+| ANGULAR | 3 | 27 | 26 | 3 |
+| VUE | 4 | 21 | 20 | 4 |
+| NODE_JS | 4 | 25 | 24 | 4 |
+| DJANGO | 1 | 7 | 6 | 1 |
+| SPRING_BOOT | 3 | 33 | 32 | 3 |
+| REST_API | 5 | 40 | 39 | 5 |
+| POSTGRESQL | 3 | 30 | 29 | 3 |
+| MYSQL | 2 | 12 | 11 | 2 |
+| MONGODB | 3 | 21 | 20 | 3 |
+| GIT | 1 | 4 | 3 | 1 |
+| PANDAS | 1 | 7 | 6 | 1 |
+| NUMPY | 2 | 12 | 11 | 2 |
+| SCIKIT_LEARN | 4 | 43 | 42 | 4 |
+| TENSORFLOW | 3 | 24 | 23 | 3 |
+| PYTORCH | 3 | 21 | 20 | 3 |
+| ML_MODEL_DEVELOPMENT | 4 | 45 | 44 | 4 |
+| LINUX | 3 | 21 | 20 | 3 |
+| CI_CD | 3 | 15 | 14 | 3 |
+| DOCKER | 1 | 7 | 6 | 1 |
+| KUBERNETES | 2 | 14 | 13 | 2 |
+| AWS | 2 | 23 | 22 | 2 |
+| SPARK | 3 | 25 | 24 | 3 |
+| AIRFLOW | 2 | 22 | 21 | 2 |
+| KAFKA | 2 | 18 | 17 | 2 |
+| **Total** | **80** | **629** | **599** | **80** |
+
+For every token, `states = transitions + 1` and `final states = aliases`, as the construction of section 2.5 predicts.
+
+## 2.11 Relation with the rest of the pipeline
+
+* The output of `normalize()` (canonical tokens) is sorted and filtered by profile in Stage 2b, and then read by the finite automata of Stage 3, where **each token is one symbol** of the automaton alphabet (decision D3 of the contract). The characters `A-Z` and `_` of Γ are only the internal representation of that symbol.
+* The transducers do not know about profiles; they only know the vocabulary.
+
 ---
 
 ## 3. Finite Automata — 5-Tuple (Stage 3 — Diego)
