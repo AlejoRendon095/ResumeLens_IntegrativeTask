@@ -174,6 +174,167 @@ W ([-'] W)? ( WS+ W ([-'] W)? ){1,3}      with W = L+
 
 **Limitations.** One-word names, names with more than four words and names with titles or periods (`Dr. Ada Lovelace`) are not recognized. Any first line made of 2 to 4 letter-only words (for example a job title) is a false positive.
 
+### 1.4.5 `EXPERIENCE_RE`
+
+```python
+EXPERIENCE_RE = re.compile(
+    r"(?im)^\s*(?P<years>\d+(?:\.\d+)?)\s*\+?\s*(?:years?|años?)"
+    r"\s+(?:of\s+|de\s+)?(?:experience|experiencia)\s*(?:en\s+)?"
+    r"(?P<description>[^.\r\n]+)\.?\s*$"
+)
+```
+
+**Pieces.**
+
+* `(?im)`: case-insensitive and multiline (so `^` and `$` delimit a line).
+* `(?P<years>\d+(?:\.\d+)?)`: an integer or decimal number, captured as `years`.
+* `\s*\+?\s*`: an optional plus sign (`5+ years`).
+* `(?:years?|años?)`: the unit word in English or Spanish.
+* `(?:of\s+|de\s+)?(?:experience|experiencia)`: an optional connector and the word for experience.
+* `(?:en\s+)?`: an optional Spanish connector.
+* `(?P<description>[^.\r\n]+)`: the description, captured until a period or the end of the line.
+
+**Language.**
+
+```
+WS* N WS* "+"? ("year"|"years"|"año"|"años") WS+ (("of"|"de") WS+)?
+("experience"|"experiencia") WS* ("en" WS+)? T+ "."? WS*
+with N = D+ ("." D+)? and T = any character except ".", CR and LF
+```
+
+The extractor converts `years` to a `float` and strips the `description`.
+
+**Accepted:** `3 years of experience developing web applications.`, `5+ years of experience leading teams.`, `3 años de experiencia en análisis de datos.`
+
+**Rejected:** `years of experience` (no number), `3 years of experience.` (no description), `3 months of experience coding.` (only years are supported).
+
+**Limitations.** The statement must start its line. Descriptions cannot contain an inner period. Written numbers (`three years`), months and phrasings such as "over 3 years" are not supported.
+
+### 1.4.6 `EDUCATION_RE`
+
+```python
+EDUCATION_RE = re.compile(
+    r"(?im)^\s*(?P<degree>.*?\b(?:B\.?\s*Sc\.?|M\.?\s*Sc\.?|Ph\.?D\.?|"
+    r"bachelor(?:'s)?|master(?:'s)?|engineer(?:ing)?|ingenier[ií]a|"
+    r"licenciatura|doctorate|degree)\b.*?)"
+    r"(?:\s*[-,|]\s*|\s+)(?P<institution>(?:Universidad|University(?:\s+of)?)[^,|;\r\n]*?)?"
+    r"(?:\s*[-,|]?\s*(?P<year>\d{4}(?:\s*-\s*\d{4})?))?\s*$"
+)
+```
+
+**Pieces.**
+
+* `(?P<degree>.*?\b(?:...)\b.*?)`: a line fragment that contains one degree keyword (BSc, MSc, PhD, bachelor, master, engineer, engineering, ingeniería, licenciatura, doctorate, degree).
+* `(?:\s*[-,|]\s*|\s+)`: a **mandatory separator** (a hyphen, comma or bar, or whitespace) after the degree.
+* `(?P<institution>...)?`: an optional institution that starts with `Universidad` or `University` (`University of`).
+* `(?P<year>\d{4}(?:\s*-\s*\d{4})?)`: an optional year or year range.
+* `\s*$`: the end of the line.
+
+**Language.** A line with a degree keyword, followed by a separator, optionally followed by a university-style institution and optionally by a year or range:
+
+```
+WS* DEGREE_TEXT SEP (INSTITUTION)? ( WS* [-,|]? WS* YEAR )? WS*
+with SEP = (WS* [-,|] WS* | WS+) and YEAR = D{4} (WS* "-" WS* D{4})?
+```
+
+**How it is used.** Besides the pattern, `extract()` discards a match whose degree is only `Engineer` or `Engineering` unless the line also has an institution or a year. This avoids reading a job title such as "Software Engineer" as education.
+
+**Accepted:** `B.Sc. Computer Science - Universidad de los Andes - 2020-2024` (degree `B.Sc. Computer Science`, institution `Universidad de los Andes`, year `2020-2024`), `PhD University X`, `Master's Degree - University of Toronto - 2024`.
+
+**Rejected:** `Computer Science - College X` (no degree keyword), `B.Sc. Computer Science - 20` (the year needs four digits), `B.Sc. Computer Science` (a degree line with **no separator, institution or year** after it; see the limitations).
+
+**Limitations.** Only institutions that begin with `Universidad` or `University` are recognized. Because the pattern requires a separator after the degree, a line that contains **only** the degree (`B.Sc. Computer Science`, `Bachelor in Computer Science`) is not captured, unless it has trailing whitespace. Institution extraction is a best effort.
+
+### 1.4.7 `SKILLS_SECTION_RE`
+
+```python
+SKILLS_SECTION_RE = re.compile(
+    r"(?ims)^[ \t]*(?:technical skills|skills|tech stack)[ \t]*:?[ \t]*(?:\r?\n)?"
+    r"(?P<body>.*?)(?=\r?\n[ \t]*\r?\n"
+    r"|\r?\n[ \t]*[^:\r\n]{1,60}[ \t]*:[ \t]*(?:\r?\n|$)"
+    r"|\r?\n[ \t]*(?:education|experience|projects|languages|certifications|contact|summary)"
+    r"[ \t]*(?:\r?$)|\Z)"
+)
+```
+
+**Pieces.**
+
+* `(?ims)`: case-insensitive, multiline, and `.` also matches line breaks.
+* `^[ \t]*(?:technical skills|skills|tech stack)[ \t]*:?`: a heading, with an optional colon.
+* `(?P<body>.*?)`: the body, taken lazily (the shortest text up to a terminator).
+* The lookahead `(?= ... )` ends the body at the first of: a blank line, a new heading that ends with a colon, a known heading without colon (`education`, `experience`, `projects`, `languages`, `certifications`, `contact`, `summary`), or the end of the text.
+
+**Language.** A skills heading followed by the shortest body that precedes one of the terminators above.
+
+**Accepted:** `Technical Skills:\nJS, React.js` (body `JS, React.js`), `Skills: Python\n\nEducation` (body `Python`, stopped by the blank line), `Technical Skills:\nPython, Git\nEducation\nB.Sc. X` (body `Python, Git`, stopped by the heading `Education` without colon).
+
+**Rejected as a heading:** `Technical Skill` (singular), `Abilities:` (not one of the three accepted headings).
+
+**Limitations.** Only three heading names are recognized. The body stops at any short line that ends with a colon, even if it is not a heading. If no terminator appears, the body extends to the end of the text. The pattern does not check that each item is a known skill.
+
+### 1.4.8 `_SKILL_SPLIT_RE`
+
+```python
+_SKILL_SPLIT_RE = re.compile(r"[,;|\u2022\r\n]+")
+```
+
+**Pieces.** A character class with the separators comma, semicolon, vertical bar, bullet (`•`), carriage return and line feed, repeated one or more times.
+
+**Language.** `(","|";"|"|"|"•"|CR|LF)+`
+
+**Accepted as a separator:** `,`, `;|`, `•`, a line break.
+
+**Rejected:** a single space (`JS React` is **one** item), `/` (so `CI/CD` is not split), `:`.
+
+**How it is used.** The skills body is split with this expression; each piece is then stripped of surrounding whitespace and of **one** trailing period, and empty pieces are discarded. The order, the case and the duplicates are preserved.
+
+**Limitations.** Skills separated only by spaces are not split, and a skill name that contains one of the separators cannot be represented.
+
+### 1.4.9 Alias fallback (free-text scan)
+
+When the résumé has **no** skills section, `extract()` looks for known skill spellings in the whole text. The pattern is built at runtime from the aliases in `vocabulary.json` (via `alias_index()`):
+
+```python
+aliases = sorted(
+    (alias for alias in alias_index()
+     if len(alias) >= 3 and alias.casefold() not in _FALLBACK_STOPWORDS),
+    key=len, reverse=True,
+)
+alias_pattern = re.compile(
+    r"(?i)(?<![\w])(?:" + "|".join(re.escape(a) for a in aliases) + r")(?![\w])"
+)
+```
+
+with `_FALLBACK_STOPWORDS = {"rest", "node", "torch"}`.
+
+**Design decisions.**
+
+* The alternation is built from the vocabulary, not from a copy, so the extractor and the transducers always share one source of truth (contract section 3.2, rule 4).
+* Aliases are sorted by **decreasing length**, so a longer alias (`javascript`) is tried before a shorter one that is its prefix (`java`).
+* `¬W` on both sides forces **whole-word** matches.
+* Aliases shorter than three characters (`js`, `ts`, `ml`, `tf`, `py`) and the ambiguous words `rest`, `node` and `torch` are ignored: in free text they produce too many false positives.
+* The surface text is returned **exactly as it appears** in the résumé.
+
+**Language.** `¬W (A1 | A2 | ... | An) ¬W`, where each `Ai` is one literal alias.
+
+**Accepted:** `React.js` and `Git` in "I work with React.js and Git." (result `["React.js", "Git"]`).
+
+**Rejected:** `JS`, `ML`, `TF` (too short), `Node`, `Torch`, `REST` (stopwords). For example "I use JS, ML, TF, REST, Node, Torch, Git, and React." produces `["Git", "React"]`.
+
+**Limitations.** It cannot tell a technology from the same word used in ordinary prose, and the stopword list is chosen by hand. The fallback is used only when no skills section is found; a skills section takes precedence.
+
+## 1.5 Implementation and stored output
+
+`extract(text: str) -> ExtractionResult` validates the type of the input and calls one helper per information type: name, emails, phones, links, education, experience and skills. It builds a `Candidate` and an `ExtractionResult` (`src/resumelens/models.py`).
+
+* Matches are returned **in order of appearance**.
+* Emails, phones and links are stored as lists of strings; links lose trailing sentence punctuation.
+* Experience is stored as `Experience(years: float, description: str)`.
+* Education is stored as `Education(degree, institution, year)`, with empty strings for missing fields.
+* `raw_skills` is stored as a list of strings, unmodified, which becomes the input of Stage 2.
+
+The behavior is covered by `tests/test_extraction.py` (each pattern, English and Spanish variants, empty input, invalid types, determinism) and, together with Stage 2, by `tests/test_stage1_2.py` (the two résumés of the assignment and every file in `samples/`).
+
 ---
 
 ## 2. Finite-State Transducers — 7-Tuple (Stage 2 — Alejo)
