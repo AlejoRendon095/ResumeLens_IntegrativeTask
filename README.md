@@ -160,7 +160,7 @@ To run with verbose output:
 pytest -v
 ```
 
-The test suite includes 101 tests across eight test modules:
+The test suite includes 226 tests across the following modules:
 - `tests/test_extraction.py`: Regular expression matching for contact, education, experience, and skills.
 - `tests/test_vocabulary.py`: Canonical vocabulary integrity, alphabet validation, and alias constraints.
 - `tests/test_normalization.py`: Preprocessing and finite-state transducer mappings.
@@ -170,6 +170,20 @@ The test suite includes 101 tests across eight test modules:
 - `tests/test_pipeline.py`: Stage orchestration, dependency injection, and contract invariants.
 - `tests/test_app.py`: CLI flags, exit codes, and artifact file generation.
 - `tests/test_integration.py`: End-to-end evaluation using sample résumés in `samples/`.
+- `tests/test_profiles.py`: Profile files and the validation rules of the profile format.
+- `tests/test_sorting.py`: Filtering and canonical ordering of tokens by profile (Stage 2b).
+- `tests/test_recognition.py`: ε-NFA construction from the profile slots and classification (Stage 3).
+- `tests/test_automata.py`: Equivalence of the ε-NFA, the DFA and the minimal DFA; 5-tuple export; contract invariants.
+- `tests/test_diagrams.py`: Mermaid and Graphviz diagrams of the automata.
+- `tests/test_recognition_scenarios.py`: Stage 2b/3 scenarios through the complete pipeline.
+
+### Regenerating the automata diagrams
+
+```bash
+python scripts/export_diagrams.py --svg
+```
+
+Writes the Mermaid (`.mmd`), Graphviz (`.dot`) and SVG diagrams of the four profile automata, plus the index [`docs/diagrams/automata.md`](docs/diagrams/automata.md). The `--svg` option needs Graphviz installed.
 
 ---
 

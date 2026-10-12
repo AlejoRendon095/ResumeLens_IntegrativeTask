@@ -201,8 +201,9 @@ def _resolve_profiles(custom: list[dict[str, Any]] | None, profiles_dir: str | P
     try:
         from resumelens.profiles import load_profiles
         if callable(load_profiles):
-            path = profiles_dir if profiles_dir is not None else "profiles/"
-            return load_profiles(path)
+            # None -> load_profiles() resolves <repo>/profiles itself, so the
+            # pipeline also works when it is not run from the repository root.
+            return load_profiles(profiles_dir)
     except (ImportError, AttributeError):
         pass
     return DEFAULT_PROFILES

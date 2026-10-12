@@ -74,21 +74,55 @@ ResumeLens follows a multi-stage sequential pipeline architecture based on forma
 - **Input:** `raw_skills: list[str]`.
 - **Output:** `NormalizationResult`.
 
-### 3.3 `sorting.py` (Stage 2b)
+### 3.3 `profiles.py` (profile configuration)
 - **Owner:** Juan Diego Balanta Molina (Diego)
-- **Formal Model:** Profile-defined canonical ordering.
-- **Responsibility:** Filters tokens that do not belong to the target profile and orders the remaining tokens according to the profile's slots.
-- **Input:** `tokens: list[str]`, `profile: dict`.
-- **Output:** `list[str]` (sequence for automaton consumption).
+- **Responsibility:** Loads the JSON files of `profiles/` and validates them against the rules of contract Section 7.3, so the four profiles are data processed by one engine.
 
-### 3.4 `recognition.py` (Stage 3)
+| Function | Input | Output | Errors |
+|---|---|---|---|
+| `load_profiles(directory=None, vocabulary=None)` | Folder with `*.json` (default: `<repo>/profiles`, resolved from the package location) | `list[dict]` sorted by `order`, then file name | `ProfileConfigError` if the folder is missing or empty, a file is invalid or two ids repeat |
+| `load_profile(path, vocabulary=None)` | One JSON file | Normalized profile `dict` | `ProfileConfigError` (missing file, invalid JSON, rule violation) |
+| `validate_profile(raw, source, vocabulary=None)` | Decoded JSON object | Normalized copy with `id`, `display_name`, `order`, `slots` (input not mutated) | `ProfileConfigError`: bad id, no slots, token not in the vocabulary, overlapping `any_of`, every slot optional |
+| `profile_alphabet(profile)` | Profile | Tokens in slot order (alphabet Σ of its automaton) | — |
+
+### 3.4 `sorting.py` (Stage 2b)
 - **Owner:** Juan Diego Balanta Molina (Diego)
-- **Formal Model:** Finite-State Automata (FSAs via `pyformlang`).
-- **Responsibility:** Builds automata from profile specifications and evaluates whether candidate token sequences satisfy qualification patterns.
-- **Input:** `tokens: list[str]`, `profiles: list[dict]`.
-- **Output:** `list[ProfileResult]`.
+- **Formal Model:** Profile-defined canonical ordering (filter + stable sort).
+- **Responsibility:** Turns the normalized tokens into the word that a profile automaton reads: drops tokens that belong to no slot of the profile (decision D5) and sorts the rest by (slot index, position inside `any_of`).
 
-### 3.5 `dsl.py` and `candidate.tx` (Stage 4)
+| Function | Input | Output |
+|---|---|---|
+| `sort_for_profile(tokens, profile)` | Normalized tokens, profile | Filtered, deduplicated and sorted `list[str]`; depends only on the *set* of tokens |
+| `filter_for_profile(tokens, profile)` | Tokens, profile | Tokens of the profile in their original order |
+| `discarded_for_profile(tokens, profile)` | Tokens, profile | Tokens removed by the filter (used to explain a result) |
+| `canonical_order(profile)` | Profile | `{token: (slot_index, position)}` sort keys |
+
+### 3.5 `recognition.py` (Stage 3)
+- **Owner:** Juan Diego Balanta Molina (Diego)
+- **Formal Model:** Finite automata (`pyformlang`): one ε-NFA per profile built from its slots, with the equivalent DFA and minimal DFA derived for the formalization.
+- **Responsibility:** Decides, for every profile, whether the sorted word of the résumé belongs to the profile language S1^k1 … Sn^kn (k = `+` mandatory, `*` optional).
+
+| Function | Input | Output |
+|---|---|---|
+| `classify(tokens, profiles=None)` | Normalized tokens; profiles (default: `load_profiles()`) | `list[ProfileResult]`, one per profile, in profile order |
+| `recognize(sequence, profile, automaton=None)` | Sorted word, profile | `bool` (ACCEPTED / REJECTED) |
+| `build_enfa(profile)` / `build_automaton(profile)` | Profile | `EpsilonNFA` with states q0…qn, p0…p(n-1), start q0, F = {qn} |
+| `build_dfa(profile)` / `build_minimal_dfa(profile)` | Profile | Equivalent `DeterministicFiniteAutomaton` (subset construction / minimized) |
+| `automaton_kind(automaton)` | Any pyformlang automaton | `"DFA"`, `"NFA"` or `"ε-NFA"`, decided from the transition relation |
+| `automaton_tuple(automaton, profile)` | Automaton, profile | `{kind, Q, Sigma, delta, q0, F}` with readable state names (source of the tables in `docs/formalization.md`) |
+
+### 3.6 `diagrams.py` and `scripts/export_diagrams.py` (Stage 3 documentation)
+- **Owner:** Juan Diego Balanta Molina (Diego)
+- **Responsibility:** Draws the transition diagrams of the four automata from `automaton_tuple`, so the diagrams always match the code.
+
+| Function | Input | Output |
+|---|---|---|
+| `to_mermaid(spec, title="")` | 5-tuple | Mermaid `flowchart` source (rendered by GitHub) |
+| `to_dot(spec, title="")` | 5-tuple | Graphviz DOT source |
+| `tuple_markdown(spec)` | 5-tuple | Markdown with Q, Σ, q0, F and the δ table |
+| `export_all(out_dir, profiles=None)` | Output folder | `.mmd` / `.dot` files per profile and automaton, plus `automata.md`; the script also renders SVGs with `--svg` |
+
+### 3.7 `dsl.py` and `candidate.tx` (Stage 4)
 - **Owner:** Edwar Estacio
 - **Formal Model:** Context-Free Grammar (CFG in EBNF via `textX`).
 - **Responsibility:** Serializes candidate information, normalized skills, and profile verdicts into a structured DSL and validates incoming DSL text.
@@ -99,7 +133,7 @@ ResumeLens follows a multi-stage sequential pipeline architecture based on forma
 - **Input:** `Candidate`, `list[str]`, `list[ProfileResult]` (for `to_dsl`); `dsl_text: str` (for `validate`).
 - **Output:** `str` (from `to_dsl`); textX model instance (from `validate`).
 
-### 3.6 `render.py` (Stage 4b)
+### 3.8 `render.py` (Stage 4b)
 - **Owner:** Edwar Estacio
 - **Responsibility:** Generates human-readable visualizations (HTML and Markdown) directly from the validated textX candidate model.
 - **Functions:**
