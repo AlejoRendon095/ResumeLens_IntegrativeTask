@@ -139,3 +139,19 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - 101 pruebas ejecutadas y pasando al 100%.
 - **Adaptaciones y cambios realizados:**
   - Redacción en inglés siguiendo las convenciones del repositorio.
+
+---
+
+## Sesión 8 — 2026-10-10 (Edwar Estacio)
+
+- **Fecha:** 2026-10-10
+- **Herramienta:** Gemini 3.8 Flash (High) (asistente de código Antigravity)
+- **Objetivo:** Redacción de la revisión de literatura académica en `docs/literature_review.md`, cubriendo fundamentos formales (Regex, FST, FSA, CFG), modelado DSL con textX, tabla comparativa de métodos formales vs. probabilísticos/LLMs y citas académicas.
+- **Prompt base:** Redacción de la revisión de literatura académica para el póster y reporte técnico, fundamentando la justificación formal y ética del proyecto.
+- **Aportes y contexto del estudiante:**
+  - Enfoque ético y formal: justificar por qué los modelos deterministas evitan el sesgo algorítmico y la opacidad de los clasificadores de caja negra basados en machine learning o LLMs.
+  - Selección y estructuración de 10 referencias académicas clásicas y contemporáneas (Chomsky, Hopcroft, Mohri, Dejanović, O'Neil, etc.).
+- **Resultados generados y utilizados:**
+  - `docs/literature_review.md` con revisión teórica completa, tabla comparativa y referencias académicas en formato APA/IEEE.
+- **Adaptaciones y cambios realizados:**
+  - Redacción en inglés formal y rigor matemático en la nomenclatura.
