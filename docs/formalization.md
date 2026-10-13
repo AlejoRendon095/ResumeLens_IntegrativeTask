@@ -557,6 +557,8 @@ For every token, `states = transitions + 1` and `final states = aliases`, as the
 * The output of `normalize()` (canonical tokens) is sorted and filtered by profile in Stage 2b, and then read by the finite automata of Stage 3, where **each token is one symbol** of the automaton alphabet (decision D3 of the contract). The characters `A-Z` and `_` of Γ are only the internal representation of that symbol.
 * The transducers do not know about profiles; they only know the vocabulary.
 
+At character level, Γ = {A–Z, _}; each transducer writes the characters of one token, and that whole word is a single symbol of the alphabet of Stage 3.
+
 ### 2.12 Limitations of Stage 2
 
 * The transducers recognize only the **aliases listed** in the vocabulary. A misspelling (`javscript`) or a technology that is not in the vocabulary is `unrecognized`. Adding a spelling means adding an alias to `vocabulary.json`.
