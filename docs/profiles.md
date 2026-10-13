@@ -101,7 +101,7 @@ A profile is an **ordered list of slots**. Each slot groups interchangeable qual
 
 **Difference with ML Engineer.** Both use Python and SQL. The Data Engineer needs a processing engine (Spark) instead of data/ML libraries, so the two profiles accept different résumés and one résumé can be accepted by both.
 
-> The two team-defined profiles are provisional until the professor publishes the requirements of the custom profiles. Replacing them only means editing `profiles/devops_engineer.json` and `profiles/data_engineer.json` (and, if new technologies appear, `vocabulary.json`); no Python code changes.
+> The two team-defined profiles are final (contract decision D11). They were chosen because they are common roles next to the two reference profiles, reuse most of the vocabulary and exercise optional slots, including two consecutive ones in Data Engineer. Replacing them would only mean editing `profiles/devops_engineer.json` and `profiles/data_engineer.json` (and, if new technologies appear, `vocabulary.json`); no Python code changes.
 
 ## 6. Results on the sample résumés
 

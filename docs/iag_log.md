@@ -246,8 +246,12 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - `README.md`: IDE usado (IntelliJ IDEA).
   - Este registro: numeración de sesiones corregida y sección de participación del estudiante completada.
   - `samples/here_dataset.md` se mantiene: aunque solo contiene un marcador, `tests/test_stage1_2.py` lo usa como caso de archivo sin hoja de vida (salida vacía).
+  - Prompt adicional: "La presentacion imagino que es un video, la vamos a subir a este drive para que edites el readme o no se, donde el profe pueda ver y entrar al link: [enlace de Drive] ... el pendiente 4 ya no hay tiempo de hablar con el profesor, asi que toma decisiones y arreglalo tu, y pendiente 5 yo no se"
+  - `README.md`: enlace a la carpeta de Drive con el video de la presentación y el póster; nota de que la interfaz de usuario es la aplicación de línea de comandos y el reporte HTML su salida visual.
+  - `docs/contracts.md` v1.5 (decisión D11), `docs/profiles.md` y `docs/formalization.md`: los perfiles DevOps Engineer y Data Engineer quedan como definitivos.
 - **Decisiones y cambios respecto a lo generado:**
   - Las secciones nuevas de `test_cases.md` describen pruebas que ya existían; no se cambió código ni pruebas.
 - **Participación y verificación del estudiante:**
   - Eligió qué pendientes resolver y confirmó el IDE, la regla de commits y la fecha límite.
+  - Indicó la carpeta de Drive para los entregables y delegó las decisiones sobre los perfiles propios y la interfaz.
   - Hizo el push del commit desde su equipo.

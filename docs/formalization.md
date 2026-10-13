@@ -843,7 +843,7 @@ We use the ε-NFA as the model because it is a direct, slot-by-slot translation 
 
 ### 3.6 DevOps Engineer (`DEVOPS_ENGINEER`, team-defined, software engineering)
 
-**Profile pattern.** A DevOps Engineer builds, ships and operates software, so the pattern follows the delivery chain: an operating system to work on (Linux), version control, a CI/CD practice, containers and a cloud provider. Container orchestration (Kubernetes) is common but not universal in junior profiles, so it is optional. The profile reuses `GIT` from the reference profiles and adds five tokens to the vocabulary (`LINUX`, `CI_CD`, `DOCKER`, `KUBERNETES`, `AWS`). This profile is provisional until the professor publishes the requirements of the team-defined profiles; changing it only means editing `profiles/devops_engineer.json`.
+**Profile pattern.** A DevOps Engineer builds, ships and operates software, so the pattern follows the delivery chain: an operating system to work on (Linux), version control, a CI/CD practice, containers and a cloud provider. Container orchestration (Kubernetes) is common but not universal in junior profiles, so it is optional. The profile reuses `GIT` from the reference profiles and adds five tokens to the vocabulary (`LINUX`, `CI_CD`, `DOCKER`, `KUBERNETES`, `AWS`). Changing it only means editing `profiles/devops_engineer.json`.
 
 | Slot | Category | Tokens (`any_of`) | Repetition |
 |---|---|---|---|
@@ -927,7 +927,7 @@ We use the ε-NFA as the model because it is a direct, slot-by-slot translation 
 
 ### 3.7 Data Engineer (`DATA_ENGINEER`, team-defined, AI/data)
 
-**Profile pattern.** A Data Engineer builds the pipelines that feed analytics and machine learning. The pattern asks for Python, a SQL database, a distributed processing engine (Spark) and version control. Workflow orchestration (Airflow) and streaming (Kafka) are frequent but depend on the company, so both slots are optional; this is the only profile with two consecutive optional slots, which the ε-NFA handles with two chained ε-edges (q3 →ε q4 →ε q5). New tokens: `SPARK`, `AIRFLOW`, `KAFKA`. Provisional, like the DevOps profile.
+**Profile pattern.** A Data Engineer builds the pipelines that feed analytics and machine learning. The pattern asks for Python, a SQL database, a distributed processing engine (Spark) and version control. Workflow orchestration (Airflow) and streaming (Kafka) are frequent but depend on the company, so both slots are optional; this is the only profile with two consecutive optional slots, which the ε-NFA handles with two chained ε-edges (q3 →ε q4 →ε q5). New tokens: `SPARK`, `AIRFLOW`, `KAFKA`.
 
 | Slot | Category | Tokens (`any_of`) | Repetition |
 |---|---|---|---|
@@ -1031,7 +1031,7 @@ We use the ε-NFA as the model because it is a direct, slot-by-slot translation 
 | One or more tokens per slot | Exactly one token per slot (the example diagram of the assignment) | The reference résumé of Mary Jane Watson lists Pandas *and* NumPy, Scikit-learn *and* TensorFlow; a one-token-per-slot automaton would reject the assignment's own example. |
 | Optional slots (`REST_API`, `ML_MODEL_DEVELOPMENT`, `KUBERNETES`, `AIRFLOW`, `KAFKA`) | Make every listed qualification mandatory | The reference résumés are expected to be accepted without REST or an explicit "ML model development" token. An ε-edge expresses "may be absent" without duplicating states. |
 | ε-NFA as the formal model, minimal DFA as its proof of determinism | Write the DFA by hand | The ε-NFA is a mechanical translation of the profile file, so the four automata come from one function. The DFA is derived automatically and checked to be equivalent by the tests. |
-| Profiles as JSON data | One Python class per profile | The assignment requires one general solution for all profiles. Replacing the two provisional profiles needs no code change. |
+| Profiles as JSON data | One Python class per profile | The assignment requires one general solution for all profiles. Replacing the two team-defined profiles needs no code change. |
 
 **Limitations.**
 
@@ -1039,7 +1039,7 @@ We use the ε-NFA as the model because it is a direct, slot-by-slot translation 
 * **Closed vocabulary.** A technology that is not in `vocabulary.json` (for example "Svelte" or "GCP") never reaches the automata, so a valid candidate can be rejected until the vocabulary and the profile are extended.
 * **Slots are a conjunction of disjunctions.** Every profile is "at least one of these AND at least one of those". Rules such as "Kubernetes only counts if Docker is present", or "two of these three", need a different construction (product automata or counters).
 * **The language is slightly larger than the reachable inputs.** Inside a slot, the loop accepts tokens in any order, while Stage 2b always sends them in `any_of` order. This never changes a result, but the automaton alone would accept sequences that the pipeline cannot produce.
-* **Provisional team profiles.** DevOps Engineer and Data Engineer were defined by the team while the professor's requirements were pending; they may change.
+* **Team-defined profiles.** DevOps Engineer and Data Engineer were designed by the team from common job requirements, not from an external specification; other teams could reasonably choose different slots.
 
 ---
 

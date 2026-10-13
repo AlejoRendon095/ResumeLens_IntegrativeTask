@@ -2,6 +2,8 @@
 
 Integrative Task 1 · Computación y Estructuras Discretas III · Universidad Icesi · 2026-2
 
+> **Deliverables:** the 10-minute technical presentation (video, in English) and the research poster are in the team's shared folder: **[Google Drive — ResumeLens deliverables](https://drive.google.com/drive/folders/1PLIk4ZYPebRSh60GVa2h0RmTssFU2nxr?usp=sharing)**.
+
 ResumeLens processes plain-text résumés and determines, for each of four professional profiles, whether the qualifications explicitly stated in the résumé satisfy a formally defined qualification pattern. It does **not** rank candidates, evaluate personal merit, or make automated hiring decisions.
 
 ---
@@ -33,7 +35,7 @@ The screening engine evaluates candidates against four configured profiles:
 3. **DevOps Engineer** (`profiles/devops_engineer.json`): Software engineering profile requiring Linux, Git, CI/CD, Docker, Cloud (AWS), and optional Kubernetes.
 4. **Data Engineer** (`profiles/data_engineer.json`): AI/data profile requiring Python, Database, Spark, Git, and optional Airflow/Kafka.
 
-All four profiles are processed through the same shared engine without profile-specific branching.
+All four profiles are processed through the same shared engine without profile-specific branching. Profiles 3 and 4 were defined by the team (the assignment let each team choose one software-engineering and one AI/data profile); their rationale is in [`docs/profiles.md`](docs/profiles.md).
 
 ---
 
@@ -78,6 +80,8 @@ pip install -r requirements.txt
 ---
 
 ## 5. Usage and CLI Application
+
+The user interface of ResumeLens is a command-line application (`app.py`): the user passes a résumé file and gets the classification summary on screen, and can export the validated DSL, an HTML report and a Markdown report. A command-line interface was chosen because the input is a plain-text file and the outputs are files; the HTML report is the visual output for the end user.
 
 ResumeLens can be executed via its command-line interface:
 
@@ -200,3 +204,5 @@ Comprehensive academic and technical documentation is available under `docs/`:
 - [`docs/test_cases.md`](docs/test_cases.md): Test scenarios, canonical evaluation cases, and contract invariants verification.
 - [`docs/diagrams/diagram.md`](docs/diagrams/diagram.md): Mermaid sequence and flowchart architectural diagrams.
 - [`docs/iag_log.md`](docs/iag_log.md): Formal log of generative AI interactions, prompts, student contributions, and adaptations.
+- [`docs/poster.md`](docs/poster.md): Content and layout of the research poster.
+- **Presentation video and poster file:** [Google Drive folder](https://drive.google.com/drive/folders/1PLIk4ZYPebRSh60GVa2h0RmTssFU2nxr?usp=sharing).
