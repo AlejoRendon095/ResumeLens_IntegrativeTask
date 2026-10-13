@@ -4,11 +4,9 @@ This document presents the formal definitions and theoretical models used across
 
 ---
 
-# Formalization of Regular Expressions 
+## 1. Regular Expressions — Stage 1 (Alejo)
 
-# Part 1. Stage 1: Regular expressions
-
-## 1.1 Role of Stage 1 in the pipeline
+### 1.1 Role of Stage 1 in the pipeline
 
 Stage 1 receives the raw text of a résumé and returns an `ExtractionResult`: the candidate data (name, emails, phones, links, education, experience) and `raw_skills`, the list of skill strings found in the text.
 
@@ -19,11 +17,11 @@ Stage 1 only **detects** candidate strings. It does not decide that `JS` and `Ja
 * The vocabulary (`vocabulary.json`) is read at runtime only by the fallback scan (section 1.4.9), to find known skill spellings when a résumé has no skills section.
 * Empty or unparsable text returns an `ExtractionResult` with empty fields, never `None`. A non-`str` input raises `ExtractionError`.
 
-## 1.2 Why regular expressions fit this stage
+### 1.2 Why regular expressions fit this stage
 
 The information extracted in Stage 1 follows **local surface patterns**: an `@` between two names, groups of digits, a degree keyword, a heading followed by a list, a separator between items. Recognizing each of them does not require remembering an unbounded amount of context or matching nested structures, so each one is describable by a regular language. A finite automaton, which is what the `re` engine compiles a pattern into for this kind of expression, is enough. More structured information (the candidate profile as a whole, with repeated and nested elements) is left to the context-free grammar of Stage 4.
 
-## 1.3 Notation
+### 1.3 Notation
 
 To describe the languages formally, the following notation is used:
 
@@ -39,11 +37,11 @@ Python's `re` module offers features beyond textbook regular expressions: flags 
 * **Named groups** only label a part of the match for extraction. They do not change the language.
 * **Lookarounds** used here have **fixed, bounded width** and check a neighbouring character or a bounded pattern. They can be expressed as an intersection or complement with a regular language, so the language remains regular in practice. No backreferences are used.
 
-## 1.4 The patterns
+### 1.4 The patterns
 
 Each regular expression is defined as a compiled module-level constant in `src/resumelens/extraction.py`. The patterns below are shown as written in the code.
 
-### Summary
+#### Summary
 
 | Constant | Information | Recognizes |
 |---|---|---|
@@ -57,7 +55,7 @@ Each regular expression is defined as a compiled module-level constant in `src/r
 | `_SKILL_SPLIT_RE` | Skill separators | Commas, semicolons, vertical bars, bullets and line breaks |
 | Alias fallback | Skills in free text | Known vocabulary aliases as whole words |
 
-### 1.4.1 `EMAIL_RE`
+#### 1.4.1 `EMAIL_RE`
 
 ```python
 EMAIL_RE = re.compile(r"(?i)\b[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+\b")
@@ -86,7 +84,7 @@ The boundary `\b` and the case flag do not extend the language beyond a regular 
 
 **Limitations.** It is meant for extraction, not validation: it accepts some invalid addresses (consecutive dots in the local part, labels starting or ending with `-`), it does not support quoted local parts, and it does not check that the domain exists.
 
-### 1.4.2 `PHONE_RE`
+#### 1.4.2 `PHONE_RE`
 
 ```python
 PHONE_RE = re.compile(r"(?<!\w)(?:\+\d{1,3}[\s-]?)?(?:\(\d{2,4}\)|\d{3})[\s-]?\d{3}[\s-]?\d{4}(?!\w)")
@@ -111,7 +109,7 @@ PHONE_RE = re.compile(r"(?<!\w)(?:\+\d{1,3}[\s-]?)?(?:\(\d{2,4}\)|\d{3})[\s-]?\d
 
 **Limitations.** It accepts any digit string with this shape, for instance a long numeric identifier, and it does not check real numbering plans. Extensions (`ext. 12`) and other national layouts are not supported.
 
-### 1.4.3 `LINK_RE`
+#### 1.4.3 `LINK_RE`
 
 ```python
 LINK_RE = re.compile(
@@ -143,7 +141,7 @@ After matching, the extractor removes trailing sentence punctuation (`.,;:!?)]}`
 
 **Limitations.** Arbitrary domains without a protocol (`example.com`) are not captured, and the URL is not validated beyond its shape.
 
-### 1.4.4 `NAME_RE`
+#### 1.4.4 `NAME_RE`
 
 ```python
 NAME_RE = re.compile(
@@ -174,7 +172,7 @@ W ([-'] W)? ( WS+ W ([-'] W)? ){1,3}      with W = L+
 
 **Limitations.** One-word names, names with more than four words and names with titles or periods (`Dr. Ada Lovelace`) are not recognized. Any first line made of 2 to 4 letter-only words (for example a job title) is a false positive.
 
-### 1.4.5 `EXPERIENCE_RE`
+#### 1.4.5 `EXPERIENCE_RE`
 
 ```python
 EXPERIENCE_RE = re.compile(
@@ -210,7 +208,7 @@ The extractor converts `years` to a `float` and strips the `description`.
 
 **Limitations.** The statement must start its line. Descriptions cannot contain an inner period. Written numbers (`three years`), months and phrasings such as "over 3 years" are not supported.
 
-### 1.4.6 `EDUCATION_RE`
+#### 1.4.6 `EDUCATION_RE`
 
 ```python
 EDUCATION_RE = re.compile(
@@ -245,7 +243,7 @@ with SEP = (WS* [-,|] WS* | WS+) and YEAR = D{4} (WS* "-" WS* D{4})?
 
 **Limitations.** Only institutions that begin with `Universidad` or `University` are recognized. Because the pattern requires a separator after the degree, a line that contains **only** the degree (`B.Sc. Computer Science`, `Bachelor in Computer Science`) is not captured, unless it has trailing whitespace. Institution extraction is a best effort.
 
-### 1.4.7 `SKILLS_SECTION_RE`
+#### 1.4.7 `SKILLS_SECTION_RE`
 
 ```python
 SKILLS_SECTION_RE = re.compile(
@@ -272,7 +270,7 @@ SKILLS_SECTION_RE = re.compile(
 
 **Limitations.** Only three heading names are recognized. The body stops at any short line that ends with a colon, even if it is not a heading. If no terminator appears, the body extends to the end of the text. The pattern does not check that each item is a known skill.
 
-### 1.4.8 `_SKILL_SPLIT_RE`
+#### 1.4.8 `_SKILL_SPLIT_RE`
 
 ```python
 _SKILL_SPLIT_RE = re.compile(r"[,;|\u2022\r\n]+")
@@ -290,7 +288,7 @@ _SKILL_SPLIT_RE = re.compile(r"[,;|\u2022\r\n]+")
 
 **Limitations.** Skills separated only by spaces are not split, and a skill name that contains one of the separators cannot be represented.
 
-### 1.4.9 Alias fallback (free-text scan)
+#### 1.4.9 Alias fallback (free-text scan)
 
 When the résumé has **no** skills section, `extract()` looks for known skill spellings in the whole text. The pattern is built at runtime from the aliases in `vocabulary.json` (via `alias_index()`):
 
@@ -323,7 +321,7 @@ with `_FALLBACK_STOPWORDS = {"rest", "node", "torch"}`.
 
 **Limitations.** It cannot tell a technology from the same word used in ordinary prose, and the stopword list is chosen by hand. The fallback is used only when no skills section is found; a skills section takes precedence.
 
-## 1.5 Implementation and stored output
+### 1.5 Implementation and stored output
 
 `extract(text: str) -> ExtractionResult` validates the type of the input and calls one helper per information type: name, emails, phones, links, education, experience and skills. It builds a `Candidate` and an `ExtractionResult` (`src/resumelens/models.py`).
 
@@ -337,9 +335,9 @@ The behavior is covered by `tests/test_extraction.py` (each pattern, English and
 
 ---
 
-# Part 2. Stage 2: Finite-state transducers
+## 2. Finite-State Transducers — Stage 2 (Alejo)
 
-## 2.1 Definition used
+### 2.1 Definition used
 
 A **finite-state transducer** (FST) reads an input word symbol by symbol, moves between a finite set of states, and **produces output** symbols while it moves. A finite automaton only accepts or rejects; a transducer also translates.
 
@@ -353,11 +351,11 @@ Each transducer is a 7-tuple `M = (Q, Σ, Γ, δ, ω, q0, F)`:
 * `q0 ∈ Q`: the initial state.
 * `F ⊆ Q`: the accepting states.
 
-## 2.2 Purpose
+### 2.2 Purpose
 
 The same technology appears with different spellings: `JS`, `Javascript` and `javascript`; `React.js`, `ReactJS` and `react js`; `Postgres` and `PostgreSQL`. Stage 2 transforms every accepted spelling into one **canonical token** (`JAVASCRIPT`, `REACT`, `POSTGRESQL`, ...). The tokens form the alphabet that the automata of Stage 3 consume, so the output set of Stage 2 is the input alphabet of Stage 3.
 
-## 2.3 Design decisions
+### 2.3 Design decisions
 
 (From `docs/contracts.md`, section 8.)
 
@@ -369,7 +367,7 @@ The same technology appears with different spellings: `JS`, `Javascript` and `ja
 | D6 | Duplicate tokens are removed after normalization, keeping the order of first appearance | `JS` and `Javascript` give a single `JAVASCRIPT` |
 | D9 | One transducer per canonical token, all generated by the same function from `vocabulary.json` | Readable machines and a single code path; adding an alias never requires code changes |
 
-## 2.4 Preprocessing (outside the transducers)
+### 2.4 Preprocessing (outside the transducers)
 
 `preprocess(raw)` applies, in this order:
 
@@ -382,7 +380,7 @@ Example: `"  React.js, "` → `"react.js,"` (strip and casefold) → `"react.js"
 
 A character outside Σ makes the string **unrecognized**.
 
-## 2.5 General construction
+### 2.5 General construction
 
 For a canonical token `t` with aliases `A_t = {a_1, ..., a_k}`, where `a_i = c_{i,1} c_{i,2} ... c_{i,n_i}`, the transducer `M_t = (Q_t, Σ, Γ_t, δ_t, ω_t, q0, F_t)` is:
 
@@ -411,7 +409,7 @@ The relation realized by `M_t` is the finite set `{ (a, t) : a ∈ A_t }`: every
 
 **Whole-string matching.** The machine produces output only when the whole input follows a complete alias path and ends in a state of `F_t`. A prefix such as `java` does not reach a final state of the `JAVASCRIPT` machine, so it is not accepted there.
 
-## 2.6 Implementation with pyformlang
+### 2.6 Implementation with pyformlang
 
 `build_transducer(canonical, aliases)` creates a `pyformlang.fst.FST`, adds state `0` as the start state, and for each alias walks from state `0`, adding a fresh state per character. Intermediate transitions have an empty output list; the last transition has `list(canonical)` as output (pyformlang represents the output word as a list of characters). The last state of the alias is added as a final state.
 
@@ -428,7 +426,7 @@ The relation realized by `M_t` is the finite set `{ (a, t) : a ∈ A_t }`: every
 
 Guarantees (contract section 10): `mapping` keys and `unrecognized` are disjoint and together equal the set of raw strings; every token belongs to the vocabulary; tokens have no duplicates; the input is not modified; the result is deterministic.
 
-## 2.7 Fully worked example: `JAVASCRIPT`
+### 2.7 Fully worked example: `JAVASCRIPT`
 
 Aliases: `js`, `javascript`, `java script`, `ecmascript`.
 
@@ -482,7 +480,7 @@ That is 2 + 10 + 11 + 10 = 33 transitions, and 33 + 1 = 34 states. Any other pai
 
 **Why `java` is not accepted.** After reading `j-a-v-a` the machine can only be in state `6` (path of `javascript`) or state `16` (path of `java script`); neither is in `F`. Without an accepting state there is no output, so `java` is not translated by `M_JAVASCRIPT`. The transducer of the token `JAVA`, whose only alias is `java`, does accept it.
 
-## 2.8 Small example: `GIT`
+### 2.8 Small example: `GIT`
 
 Alias: `git`.
 
@@ -495,7 +493,7 @@ Alias: `git`.
 | 1 | `i` | 2 | ε |
 | 2 | `t` | 3 | GIT |
 
-## 2.9 Worked trace
+### 2.9 Worked trace
 
 For the raw string `"  React.js, "` (aliases of `REACT`: `react`, `react.js`, `reactjs`, `react js`):
 
@@ -505,7 +503,7 @@ For the raw string `"  React.js, "` (aliases of `REACT`: `react`, `react.js`, `r
 4. Then `j` leads to `12` and `s` leads to `13`, which is final, and the last transition emits `REACT`.
 5. The other transducers (`JAVASCRIPT`, `NODE_JS`, ...) do not accept `react.js`, so exactly one machine accepts it, and `mapping["  React.js, "] = "REACT"` (the key is the original string).
 
-## 2.10 Data of the 30 transducers
+### 2.10 Data of the 30 transducers
 
 Counted from the real vocabulary (30 canonical tokens, 80 aliases). "States" includes state 0; "Transitions" counts the transitions of the alias paths.
 
@@ -545,7 +543,7 @@ Counted from the real vocabulary (30 canonical tokens, 80 aliases). "States" inc
 
 For every token, `states = transitions + 1` and `final states = aliases`, as the construction of section 2.5 predicts.
 
-## 2.11 Relation with the rest of the pipeline
+### 2.11 Relation with the rest of the pipeline
 
 * The output of `normalize()` (canonical tokens) is sorted and filtered by profile in Stage 2b, and then read by the finite automata of Stage 3, where **each token is one symbol** of the automaton alphabet (decision D3 of the contract). The characters `A-Z` and `_` of Γ are only the internal representation of that symbol.
 * The transducers do not know about profiles; they only know the vocabulary.

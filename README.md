@@ -160,7 +160,7 @@ To run with verbose output:
 pytest -v
 ```
 
-The test suite includes 226 tests across the following modules:
+The test suite includes 249 tests across the following modules:
 - `tests/test_extraction.py`: Regular expression matching for contact, education, experience, and skills.
 - `tests/test_vocabulary.py`: Canonical vocabulary integrity, alphabet validation, and alias constraints.
 - `tests/test_normalization.py`: Preprocessing and finite-state transducer mappings.
@@ -194,6 +194,8 @@ Comprehensive academic and technical documentation is available under `docs/`:
 - [`docs/contracts.md`](docs/contracts.md): Interface contracts, canonical vocabulary (30 tokens), profile formats, and cross-module decisions (D1–D10).
 - [`docs/formalization.md`](docs/formalization.md): Mathematical formalization of the computational models (Regex, FST 7-tuple, FSA 5-tuple, and CFG EBNF 4-tuple).
 - [`docs/design_modules.md`](docs/design_modules.md): Architectural design, module responsibilities, inputs, outputs, and exception hierarchy.
+- [`docs/profiles.md`](docs/profiles.md): The four professional profiles, their slots and the reasons behind each requirement.
+- [`docs/literature_review.md`](docs/literature_review.md): Literature review and comparison with probabilistic / LLM screening.
 - [`docs/test_cases.md`](docs/test_cases.md): Test scenarios, canonical evaluation cases, and contract invariants verification.
 - [`docs/diagrams/diagram.md`](docs/diagrams/diagram.md): Mermaid sequence and flowchart architectural diagrams.
 - [`docs/iag_log.md`](docs/iag_log.md): Formal log of generative AI interactions, prompts, student contributions, and adaptations.
