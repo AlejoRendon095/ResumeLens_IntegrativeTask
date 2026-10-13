@@ -155,6 +155,9 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - `docs/literature_review.md` con revisión teórica completa, tabla comparativa y referencias académicas en formato APA/IEEE.
 - **Adaptaciones y cambios realizados:**
   - Redacción en inglés formal y rigor matemático en la nomenclatura.
+
+---
+
 ## Sesión 8 — 2026-10-09 / 2026-10-10 (Juan Diego Balanta Molina — Diego)
 
 - **Fechas:** 2026-10-09 y 2026-10-10 (trabajo distribuido en commits separados por al menos 2 horas).
@@ -179,3 +182,20 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - Las referencias de la revisión de literatura se verificaron en ACL Anthology y en las páginas de los editores; se eliminaron los datos bibliográficos que no se pudieron confirmar.
   - Al integrar `main` se corrigió la ruta fija `"profiles/"` del pipeline para que funcione fuera de la raíz del repositorio.
 - **Verificación por el estudiante:** *(pendiente: completar con lo que el estudiante revisó y entiende de cada parte antes de la sustentación)*
+
+---
+
+## Sesión 9 — 2026-10-12 (Edwar Estacio)
+
+- **Fecha:** 2026-10-12
+- **Herramienta:** Gemini 3.8 Flash (High) (asistente de código Antigravity)
+- **Objetivo:** Creación del póster de investigación en inglés (`docs/poster.md`) que sintetiza los 4 modelos computacionales, la arquitectura del pipeline, los resultados experimentales y la justificación ética y técnica.
+- **Prompt base:** Redacción del póster de investigación en inglés en cumplimiento del entregable académico de la asignatura.
+- **Aportes y contexto del estudiante:**
+  - Estructuración de los paneles en formato A0 vertical (Motivation, Computational Models, Pipeline Architecture, Models in Action, Results, Discussion).
+  - Resumen formal de las cuatro etapas del pipeline integrando el trabajo de los tres miembros del equipo.
+  - Verificación de métricas experimentales (249 pruebas pasando al 100%, invarianza ante permutación y robustez ante ruido).
+- **Resultados generados y utilizados:**
+  - `docs/poster.md` con el diseño completo del póster de investigación en inglés.
+- **Adaptaciones y cambios realizados:**
+  - Redacción en inglés formal y alineación con la literatura y formalización del repositorio.
