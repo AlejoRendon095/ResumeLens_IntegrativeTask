@@ -158,7 +158,6 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
 
 ---
 
-## Sesión 8 — 2026-10-09 / 2026-10-10 (Juan Diego Balanta Molina — Diego)
 ## Sesión 9 — 2026-10-09 / 2026-10-10 (Juan Diego Balanta Molina — Diego)
 
 - **Fechas:** 2026-10-09 y 2026-10-10 (trabajo distribuido en commits separados por al menos 2 horas).
@@ -182,11 +181,15 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - El ejemplo de `classify` de la Sección 6.4 del contrato tenía un error (secuencia vacía para Full Stack); las pruebas lo detectaron y se corrigió en el contrato (v1.3).
   - Las referencias de la revisión de literatura se verificaron en ACL Anthology y en las páginas de los editores; se eliminaron los datos bibliográficos que no se pudieron confirmar.
   - Al integrar `main` se corrigió la ruta fija `"profiles/"` del pipeline para que funcione fuera de la raíz del repositorio.
-- **Verificación por el estudiante:** *(pendiente: completar con lo que el estudiante revisó y entiende de cada parte antes de la sustentación)*
+- **Participación y verificación del estudiante:**
+  - Definió las restricciones de trabajo: 10 commits por integrante con al menos 2 horas entre cada uno, commits a su nombre y sin atribución de coautoría a la IA, trabajo en la rama `diego/profiles-recognition`.
+  - Aprobó el cronograma de commits y el alcance de cada uno, y pidió excluir las diapositivas del cronograma interno.
+  - Hizo el push de cada commit desde su equipo y abrió y unió el Pull Request #1 (`diego/profiles-recognition` → `main`).
+  - Revisó los resúmenes de avance entregados por la IA en cada paso (estado de commits, resultados de las pruebas y clasificación de las hojas de vida de `samples/`).
 
 ---
 
-## Sesión 9 — 2026-10-12 (Edwar Estacio)
+## Sesión 10 — 2026-10-12 (Edwar Estacio)
 
 - **Fecha:** 2026-10-12
 - **Herramienta:** Gemini 3.8 Flash (High) (asistente de código Antigravity)
@@ -200,7 +203,10 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
   - `docs/poster.md` con el diseño completo del póster de investigación en inglés.
 - **Adaptaciones y cambios realizados:**
   - Redacción en inglés formal y alineación con la literatura y formalización del repositorio.
-## Sesión 10 — 2026-10-12 (Juan Diego Balanta Molina — Diego)
+
+---
+
+## Sesión 11 — 2026-10-12 (Juan Diego Balanta Molina — Diego)
 
 - **Fecha:** 2026-10-12
 - **Herramienta:** Claude (Anthropic), en una sesión de trabajo con acceso al repositorio.
@@ -219,4 +225,29 @@ Registro de interacciones con herramientas de inteligencia artificial generativa
 - **Decisiones y cambios respecto a lo generado:**
   - Los perfiles 3 y 4 siguen marcados como provisionales hasta que el profesor confirme sus requisitos.
   - No se modificó el contenido técnico de las secciones de Alejo y Edwar, solo la numeración, las citas y una afirmación de la tabla comparativa.
-- **Verificación por el estudiante:** *(pendiente: completar con lo que el estudiante revisó antes de la sustentación)*
+- **Participación y verificación del estudiante:**
+  - Pidió la revisión de `main` y decidió qué correcciones hacer y subir.
+  - Hizo el commit y el push de los cambios desde su equipo.
+
+---
+
+## Sesión 12 — 2026-10-12 (Juan Diego Balanta Molina — Diego)
+
+- **Fecha:** 2026-10-12
+- **Herramienta:** Claude (Anthropic), en una sesión de trabajo con acceso al repositorio.
+- **Objetivo:** Revisar el estado del repositorio frente a los entregables y cerrar pendientes de documentación.
+- **Prompts principales (literales):**
+  - "Analiza el estado del repositorio y haz una tabla con lo que nos falta por hacer"
+  - "No tengo mucho tiempo, haz el pendiente 3, 8 que usamos intellij, el 9 encargate tu, 10 tambien y 12... el tema de los commits en personal, 10 cada uno cada 2 horas minimos confirmado y la fecha limite la movieron para hoy 12"
+- **Contenido propio entregado a la IA:** confirmación del IDE usado por el equipo (IntelliJ IDEA), de la regla de commits (10 por integrante, 2 horas entre los commits de cada uno) y de la nueva fecha límite (12 de octubre).
+- **Resultados generados y utilizados:**
+  - Tabla de pendientes del repositorio (presentación, póster visual, conteo y separación de commits por integrante, perfiles provisionales).
+  - `docs/test_cases.md`: secciones 5 (etapas 1 y 2) y 6 (etapa 4) que documentan las pruebas existentes de Alejo y Edwar; fila de `test_normalization.py` en la tabla de módulos.
+  - `README.md`: IDE usado (IntelliJ IDEA).
+  - Este registro: numeración de sesiones corregida y sección de participación del estudiante completada.
+  - `samples/here_dataset.md` se mantiene: aunque solo contiene un marcador, `tests/test_stage1_2.py` lo usa como caso de archivo sin hoja de vida (salida vacía).
+- **Decisiones y cambios respecto a lo generado:**
+  - Las secciones nuevas de `test_cases.md` describen pruebas que ya existían; no se cambió código ni pruebas.
+- **Participación y verificación del estudiante:**
+  - Eligió qué pendientes resolver y confirmó el IDE, la regla de commits y la fecha límite.
+  - Hizo el push del commit desde su equipo.

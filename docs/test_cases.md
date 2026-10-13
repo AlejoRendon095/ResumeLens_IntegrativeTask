@@ -11,6 +11,7 @@ The ResumeLens verification framework is divided into the following test modules
 | Test Module | Coverage | Associated Stage |
 |---|---|---|
 | `test_extraction.py` | Regular expression pattern matching for contact, education, experience, and raw skills. | Stage 1 (Regex) |
+| `test_normalization.py` | Preprocessing, one transducer per canonical token, whole-string matching, deduplication and unrecognized strings. | Stage 2 (FST) |
 | `test_vocabulary.py` | Canonical vocabulary integrity, alphabet compliance ($\Sigma$ and $\Gamma$), rules of Section 3.2. | Core Shared |
 | `test_profiles.py` | Profile files: the four project profiles load in order; validation rules of contract Section 7.3. | Profiles (configuration) |
 | `test_sorting.py` | Filtering and canonical ordering by profile; permutation independence; no mutation. | Stage 2b (Sorting) |
@@ -184,3 +185,73 @@ Each scenario is a short résumé whose `Technical Skills` line is given below. 
 | The automaton alone requires slot order | An unsorted word (`REACT JAVASCRIPT …`) is rejected by `recognize` (`test_recognition.py`); in the pipeline Stage 2b always sorts first. |
 | Adding a token outside the profile never changes its verdict | Every token of the vocabulary that is not in the profile is added to five résumés (`test_automata.py`, invariant 4). |
 | Profile files are valid | Overlapping slots, unknown tokens, empty or all-optional profiles and duplicated ids raise `ProfileConfigError` (`test_profiles.py`). |
+
+---
+
+## 5. Stages 1 and 2 — Extraction and Normalization
+
+*Documents the tests written by Alejo in `tests/test_extraction.py` and `tests/test_normalization.py`.*
+
+### 5.1 Stage 1 — regular-expression extraction
+
+| ID | Input (fragment) | Expected output | What it checks |
+|---|---|---|---|
+| S1-1 | Wednesday Addams résumé (name, experience line, `Technical Skills:` line) | name `Wednesday Addams`; experience 3.0 years, "developing web applications"; `raw_skills` = JS, React.js, NodeJS, Postgres, Git | Name, experience and skills-section patterns on the assignment example. |
+| S1-2 | `Skills: js, JS, Javascript` / `CI/CD, Docker` | `["js", "JS", "Javascript"]` / `["CI/CD", "Docker"]` | Surface form, case and duplicates are preserved; `/` is kept inside a skill. |
+| S1-3 | Two e-mails, three phone formats, three links on separate lines | All of them, in order of appearance | Contact patterns (e-mail, phone with country code/parentheses/dashes, URLs). |
+| S1-4 | `5+ years of experience leading teams.` / `3 años de experiencia en análisis de datos.` | 5.0 "leading teams"; 3.0 "análisis de datos" | Experience pattern in English and Spanish, including `N+`. |
+| S1-5 | `B.Sc. Computer Science - Universidad de los Andes - 2020-2024` | degree, institution and year range | Education pattern. |
+| S1-6 | `Engineer` / `Engineering` alone | No education record | The degree pattern does not fire on job titles. |
+| S1-7 | Text without a skills section: `I work with React.js and Git.` | `["React.js", "Git"]` | Fallback search of known aliases in free text. |
+| S1-8 | `I use JS, ML, TF, REST, Node, Torch, Git, and React.` | `["Git", "React"]` | The fallback ignores short or ambiguous aliases (JS, ML, TF, REST, Node, Torch) to avoid false positives. |
+| S1-9 | `Technical Skills:` followed by an `Education` header without colon | Skills stop at the header | The skills section ends at the next section header. |
+| S1-10 | Empty string; Windows line endings; first line `Resume` | Empty fields, no crash; name `""` when the first line is not a name | Robustness and the "never `None`" rule of the contract. |
+| S1-11 | `None` or `123` | `ExtractionError` | Contract Section 9. |
+
+### 5.2 Stage 2 — finite-state transducer normalization
+
+| ID | Input | Expected output | What it checks |
+|---|---|---|---|
+| S2-1 | `"  JS "`, `"React.js,"`, `"Node  JS"`, `"Scikit-learn."` | `js`, `react.js`, `node js`, `scikit-learn` | `preprocess`: strip, casefold, collapse spaces, remove trailing punctuation but keep `.js`. |
+| S2-2 | `js`, `javascript`, `java script` | `JAVASCRIPT` | One transducer per token accepts every alias of its row. |
+| S2-3 | `java` on the JAVASCRIPT transducer | no output | Whole-string matching: `java` is not a prefix match of `javascript`. |
+| S2-4 | Every alias of `vocabulary.json` | Its own canonical token | The 30 generated transducers cover the full vocabulary. |
+| S2-5 | `JS, React.js, NodeJS, Postgres, Git` | `JAVASCRIPT REACT NODE_JS POSTGRESQL GIT`, full `mapping`, `unrecognized = []` | Assignment example. |
+| S2-6 | `Git, NodeJS, JS, Postgres, React.js` | Tokens in first-appearance order | Stage 2 does not sort (sorting is Stage 2b). |
+| S2-7 | `JS, Javascript, js` | `tokens = [JAVASCRIPT]`, three mapping keys | Deduplication (decision D6) without losing traceability. |
+| S2-8 | `JS, Figma, Git, Figma, c#` | `tokens = [JAVASCRIPT, GIT]`, `unrecognized = [Figma, c#]` | Unknown skills are reported once and never guessed (decision D4); `#` is outside Σ. |
+| S2-9 | `None`, `"JS"`, `[1, 2]` | `TypeError` | Argument types (a list or tuple of strings is required). |
+
+## 6. Stage 4 — Candidate Profile Language and Visualization
+
+*Documents the tests written by Edwar in `tests/test_dsl.py` and `tests/test_render.py`.*
+
+### 6.1 Accepted DSL
+
+| ID | Input | Expected result | What it checks |
+|---|---|---|---|
+| S4-1 | Reference example of contract Section 6.5 | Parsed model with name, experience, skills and four classifications | The grammar accepts the agreed shape. |
+| S4-2 | `to_dsl` of a complete candidate (contacts, education, experience, skills) | `validate(to_dsl(...))` succeeds and returns the same data | Round trip (invariant 6). |
+| S4-3 | `to_dsl` of a candidate with only a name and classifications | Valid DSL | Optional blocks may be absent. |
+
+### 6.2 Rejected DSL (lexical or syntactic errors)
+
+| ID | Input | Expected result | Error type |
+|---|---|---|---|
+| S4-4 | Empty or whitespace-only text | `DSLValidationError` | Missing start symbol |
+| S4-5 | Missing `candidate` keyword | `DSLValidationError` | Syntactic |
+| S4-6 | Missing `classification` block | `DSLValidationError` with line number | Syntactic (mandatory block) |
+| S4-7 | Verdict `MAYBE` | `DSLValidationError` with line number | Lexical (only `ACCEPTED` / `REJECTED`) |
+| S4-8 | Skill token `javascript` (lower case) | `DSLValidationError` | Lexical (tokens are `[A-Z][A-Z_]*`) |
+| S4-9 | Unclosed string `"Wednesday Addams {` | `DSLValidationError` | Lexical |
+| S4-10 | Unknown block `unknown_block { … }` | `DSLValidationError` | Syntactic |
+
+### 6.3 Visualization
+
+| ID | Input | Expected result | What it checks |
+|---|---|---|---|
+| S4-11 | Complete validated model | Markdown and HTML with name, contacts, education, experience, skills and the four verdicts | Completeness of both outputs. |
+| S4-12 | Name and description with `<script>`, `&`, quotes | Escaped entities in the HTML, no raw `<script>` | XSS protection (`html.escape`). |
+| S4-13 | Model without contacts, education, experience or skills | "No … provided" messages and REJECTED badges | Empty states. |
+| S4-14 | 1 year and 2.5 years of experience | "1 year", "2.5 years" | Singular and fractional years. |
+| S4-15 | `None` or a plain dictionary | `TypeError` | Rendering only accepts a validated model (contract Section 6.6). |

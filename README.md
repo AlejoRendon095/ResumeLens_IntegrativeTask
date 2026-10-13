@@ -54,6 +54,7 @@ The interfaces, data structures, and shared decisions governing module interacti
 ### Requirements
 * Python 3.10 or newer (tested on Python 3.10, 3.11, 3.12, 3.13)
 * Virtual environment tool (`venv`)
+* IDE used by the team: IntelliJ IDEA (with the Python plugin); any editor with Python 3.10+ works
 
 ### Installation Steps
 
