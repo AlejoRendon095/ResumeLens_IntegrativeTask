@@ -333,6 +333,15 @@ with `_FALLBACK_STOPWORDS = {"rest", "node", "torch"}`.
 
 The behavior is covered by `tests/test_extraction.py` (each pattern, English and Spanish variants, empty input, invalid types, determinism) and, together with Stage 2, by `tests/test_stage1_2.py` (the two résumés of the assignment and every file in `samples/`).
 
+### 1.6 Limitations of Stage 1
+
+* The **name** is read only from the first non-empty line; a résumé that starts with a title (`Resume`, `Curriculum Vitae`) leaves it empty, and a first line made of 2 to 4 letter-only words that is not a name is a false positive.
+* **Experience** is detected only when the statement starts its line, and only with a number of years (not months or written numbers).
+* **Education** needs a degree keyword followed by a separator; a line with only the degree is not captured, and only institutions that start with `Universidad` or `University` are recognized.
+* The **skills section** is recognized under three headings; the body can stop early at a short line that ends with a colon or run on if no terminator exists.
+* The **fallback** ignores aliases shorter than three characters and `rest`, `node`, `torch`, so skills such as `JS` or `ML` are only found inside a skills section.
+* Emails, phones and links are matched by shape, not validated.
+
 ---
 
 ## 2. Finite-State Transducers — Stage 2 (Alejo)
@@ -547,6 +556,69 @@ For every token, `states = transitions + 1` and `final states = aliases`, as the
 
 * The output of `normalize()` (canonical tokens) is sorted and filtered by profile in Stage 2b, and then read by the finite automata of Stage 3, where **each token is one symbol** of the automaton alphabet (decision D3 of the contract). The characters `A-Z` and `_` of Γ are only the internal representation of that symbol.
 * The transducers do not know about profiles; they only know the vocabulary.
+
+### 2.12 Limitations of Stage 2
+
+* The transducers recognize only the **aliases listed** in the vocabulary. A misspelling (`javscript`) or a technology that is not in the vocabulary is `unrecognized`. Adding a spelling means adding an alias to `vocabulary.json`.
+* Characters outside Σ (for example `#` or `+` in `c#` or `c++`) make a string unrecognized.
+* The construction does **not share prefixes**: it is simple and correct, but it uses more states than a minimal deterministic machine (629 states for 80 aliases). Merging common prefixes, or determinizing and minimizing each machine, would reduce the size without changing the translation.
+* Case, spacing and trailing punctuation are normalized by `preprocess()` and not by the transducers, so the formal machines describe only the lowercase alias vocabulary.
+* If two different transducers recognized the same string, the string would be treated as unrecognized. The vocabulary loader rejects repeated aliases, so this cannot happen with the current vocabulary.
+
+
+### 2.13 Transition diagrams
+
+Diagram conventions: a circle is a state, a double circle is an accepting state, and a label `x / y` on an arrow means "read the input symbol `x` and write the output `y`" (`ε` is the empty output).
+
+#### 2.13.1 `GIT`
+
+```mermaid
+flowchart LR
+    q0((q0)) -- "g / ε" --> q1((q1))
+    q1 -- "i / ε" --> q2((q2))
+    q2 -- "t / GIT" --> q3(((q3)))
+```
+
+#### 2.13.2 `JAVASCRIPT` (fragment showing the non-determinism)
+
+State `q0` has three outgoing arrows labelled `j`, one for each alias that starts with that letter (`js`, `javascript`, `java script`). The dotted arrows stand for the omitted intermediate states of each alias path (the full table is in section 2.7).
+
+```mermaid
+flowchart LR
+    q0((q0)) -- "j / ε" --> q1((q1))
+    q0 -- "j / ε" --> q3((q3))
+    q0 -- "j / ε" --> q13((q13))
+    q0 -- "e / ε" --> q24((q24))
+    q1 -- "s / JAVASCRIPT" --> q2(((q2)))
+    q3 -. "a v a s c r i p / ε" .-> q11((q11))
+    q11 -- "t / JAVASCRIPT" --> q12(((q12)))
+    q13 -. "a v a space s c r i p / ε" .-> q22((q22))
+    q22 -- "t / JAVASCRIPT" --> q23(((q23)))
+    q24 -. "c m a s c r i p / ε" .-> q32((q32))
+    q32 -- "t / JAVASCRIPT" --> q33(((q33)))
+```
+
+#### 2.13.3 How to reproduce the diagrams
+
+The diagrams are generated from the same information as the machines: each canonical token and its aliases in `vocabulary.json`, through `build_transducer`. To list the transitions of any token:
+
+```python
+from resumelens.normalization import build_transducer
+from resumelens.vocabulary import default_vocabulary
+
+entry = default_vocabulary()["JAVASCRIPT"]
+transducer = build_transducer("JAVASCRIPT", list(entry.aliases))
+for (state, symbol), paths in sorted(transducer.__dict__["_delta"].items()):
+    print(state, symbol, "->", paths)
+```
+
+(`_delta` is pyformlang's internal transition map. The synthetic edge `starting_0` that pyformlang adds when it draws the graph is not a transition of the machine and is not counted in the tables.)
+
+### 2.14 Verification
+
+* Run the tests: `python -m pytest -q`.
+* The invariants of the contract (section 10) are checked for every case of `tests/test_stage1_2.py`: every raw string is either mapped or unrecognized, never both; every token belongs to the vocabulary; tokens have no duplicates; repeated runs give equal results; the input text is not modified.
+* The totals of section 2.10 can be recomputed with the code of section 2.13.3 and the vocabulary loader.
 
 ---
 
